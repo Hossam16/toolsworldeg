@@ -470,12 +470,6 @@ class HomeController extends Controller
                 $query->whereIn('id', $category_ids);
             });
         }
-                $query->whereIn('id', $category_ids);
-            });
-        }
-
-        if ($min_price != null && $max_price != null) {
-            $products = $products->where('unit_price', '>=', $min_price)->where('unit_price', '<=', $max_price);
         }
 
         if ($query != null) {
