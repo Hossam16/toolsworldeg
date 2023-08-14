@@ -14,7 +14,7 @@ class TranslationUtility
     // The db connection is established in the private constructor.
     private function __construct()
     {
-        $data = Translation::all()->with('language');
+        $data = Translation::with('language')->all();
         $this->translations = collect($data->toArray())->all();
         //$this->translations = collect($data->toArray());
     }
