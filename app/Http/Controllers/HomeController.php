@@ -459,7 +459,7 @@ class HomeController extends Controller
             $conditions['user_id'] = $seller->user->id;
         }
 
-        $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions);
+        $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions)->with('category', 'brand');
 
         if ($category_id != null && $category_id != "null") {
             $category_ids = CategoryUtility::children_ids($category_id);
@@ -477,15 +477,17 @@ class HomeController extends Controller
             $searchController->store($request);
 
             $products = Product::query()
-                ->selectRaw(
-                    '*, 
-                    (CASE WHEN name LIKE ? THEN 10 ELSE 0 END) + 
-                    (CASE WHEN tags LIKE ? THEN 5 ELSE 0 END) + 
-                    (CASE WHEN sku LIKE ? THEN 5 ELSE 0 END) + 
-                    (CASE WHEN description LIKE ? THEN 1 ELSE 0 END) AS relevance_score',
-                    ["%$query%", "%$query%", "%$query%", "%$query%"]
-                )
-                ->orderByDesc('relevance_score');
+                            ->selectRaw(
+                                '*, 
+                                (CASE WHEN name LIKE ? THEN 10 ELSE 0 END) + 
+                                (CASE WHEN tags LIKE ? THEN 5 ELSE 0 END) + 
+                                (CASE WHEN sku LIKE ? THEN 5 ELSE 0 END) + 
+                                (CASE WHEN description LIKE ? THEN 1 ELSE 0 END) AS relevance_score',
+                                ["%$query%", "%$query%", "%$query%", "%$query%"]
+                            )
+                            ->orderByDesc('relevance_score')
+                            ->with('category', 'brand');
+                            ->with('category', 'brand');
             $subQueries = explode(" ", $query);
 
             // Create queries with decreasing lengths and add them to the main query
@@ -676,7 +678,7 @@ class HomeController extends Controller
 
 
         if ($str != null && $product->variant_product) {
-            $product_stock = $product->stocks->where('variant', $str)->first();
+            $product_stock = $product->stocks()->where('variant', $str)->first();
             $price = $product_stock->price;
             $quantity = $product_stock->qty;
         } else {
