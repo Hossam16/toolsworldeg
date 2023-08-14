@@ -914,32 +914,34 @@ function getShippingCost($index){
 
     if (getBusinessSetting()->where('type', 'shipping_type')->first()->value == 'flat_rate') {
         return $calculate_shipping/count(Session::get('cart'));
-    }
-    elseif (getBusinessSetting()->where('type', 'shipping_type')->first()->value == 'seller_wise_shipping') {
-        if($product->added_by == 'admin'){
-            return getBusinessSetting()->where('type', 'shipping_cost_admin')->first()->value/count($admin_products);
+    function get_cached_products($category_id = null) {
+        $products = \App\Product::where('published', 1);
+        $verified_sellers = verified_sellers_id();
+        $vendor_system_activation = getBusinessSetting()->where('type', 'vendor_system_activation')->first()->value;
+        if($vendor_system_activation == 1){
+            $products =  $products->where(function($p) use ($verified_sellers){
+                $p->where('added_by', 'admin')->orWhere(function($q) use ($verified_sellers){
+                    $q->whereIn('user_id', $verified_sellers);
+                });
+            });
+        }
+        else{
+            $products = $products->where('added_by', 'admin');
+        }
+
+        if ($category_id != null) {
+            return Cache::remember('products-category-'.$category_id, 86400, function () use ($category_id, $products) {
+                $category_ids = CategoryUtility::children_ids($category_id);
+                $category_ids[] = $category_id;
+                return $products->whereIn('category_id', $category_ids)->latest()->take(12)->get();
+            });
         }
         else {
-            return \App\Shop::where('user_id', $product->user_id)->first()->shipping_cost/count($seller_products[$product->user_id]);
+            return Cache::remember('products', 86400, function () use ($products) {
+                return $products->latest()->get();
+            });
         }
     }
-    else{
-        return \App\Product::find($cartItem['id'])->shipping_cost;
-    }
-}
-
-function timezones(){
-    $timezones = Array(
-        '(GMT-12:00) International Date Line West' => 'Pacific/Kwajalein',
-        '(GMT-11:00) Midway Island' => 'Pacific/Midway',
-        '(GMT-11:00) Samoa' => 'Pacific/Apia',
-        '(GMT-10:00) Hawaii' => 'Pacific/Honolulu',
-        '(GMT-09:00) Alaska' => 'America/Anchorage',
-        '(GMT-08:00) Pacific Time (US & Canada)' => 'America/Los_Angeles',
-        '(GMT-08:00) Tijuana' => 'America/Tijuana',
-        '(GMT-07:00) Arizona' => 'America/Phoenix',
-        '(GMT-07:00) Mountain Time (US & Canada)' => 'America/Denver',
-        '(GMT-07:00) Chihuahua' => 'America/Chihuahua',
         '(GMT-07:00) La Paz' => 'America/Chihuahua',
         '(GMT-07:00) Mazatlan' => 'America/Mazatlan',
         '(GMT-06:00) Central Time (US & Canada)' => 'America/Chicago',
@@ -1142,121 +1144,122 @@ if (! function_exists('static_asset')) {
 
 
 if (!function_exists('isHttps')) {
-    function isHttps()
-    {
-        return !empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS']);
-    }
-}
+        $otpConfig = OtpConfiguration::first();
+        if ($otpConfig->nexmo == 1) {
+            try {
+                Nexmo::message()->send([
+                    'to'   => $to,
+                    'from' => $from,
+                    'text' => $text
+                ]);
+            } catch (\Exception $e) {
 
-if (!function_exists('getBaseURL')) {
-    function getBaseURL()
-    {
-        $root = (isHttps() ? "https://" : "http://").$_SERVER['HTTP_HOST'];
-        $root .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+            }
 
-        return $root;
-    }
-}
-
-
-if (!function_exists('getFileBaseURL')) {
-    function getFileBaseURL()
-    {
-        if(env('FILESYSTEM_DRIVER') == 's3'){
-            return env('AWS_URL').'/';
         }
-        else {
-            return getBaseURL().'public/';
+        elseif ($otpConfig->twillo == 1) {
+            $sid = env("TWILIO_SID"); // Your Account SID from www.twilio.com/console
+            $token = env("TWILIO_AUTH_TOKEN"); // Your Auth Token from www.twilio.com/console
+
+            $client = new Client($sid, $token);
+            try {
+                $message = $client->messages->create(
+                  $to, // Text this number
+                  array(
+                    'from' => env('VALID_TWILLO_NUMBER'), // From a valid Twilio number
+                    'body' => $text
+                  )
+                );
+            } catch (\Exception $e) {
+
+            }
+
+        }
+        elseif ($otpConfig->ssl_wireless == 1) {
+            $token = env("SSL_SMS_API_TOKEN"); //put ssl provided api_token here
+            $sid = env("SSL_SMS_SID"); // put ssl provided sid here
+
+            $params = [
+                "api_token" => $token,
+                "sid" => $sid,
+                "msisdn" => $to,
+                "sms" => $text,
+                "csms_id" => date('dmYhhmi').rand(10000, 99999)
+            ];
+
+            $url = env("SSL_SMS_URL");
+            $params = json_encode($params);
+
+            $ch = curl_init(); // Initialize cURL
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($params),
+                'accept:application/json'
+            ));
+
+            $response = curl_exec($ch);
+
+            curl_close($ch);
+
+            return $response;
+        }
+        elseif ($otpConfig->fast2sms == 1) {
+
+            if(strpos($to, '+91') !== false){
+                $to = substr($to, 3);
+            }
+
+            $fields = array(
+                "sender_id" => env("SENDER_ID"),
+                "message" => $text,
+                "language" => env("LANGUAGE"),
+                "route" => env("ROUTE"),
+                "numbers" => $to,
+            );
+
+            $auth_key = env('AUTH_KEY');
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => "https://www.fast2sms.com/dev/bulk",
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => "",
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 30,
+              CURLOPT_SSL_VERIFYHOST => 0,
+              CURLOPT_SSL_VERIFYPEER => 0,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => "POST",
+              CURLOPT_POSTFIELDS => json_encode($fields),
+              CURLOPT_HTTPHEADER => array(
+                "authorization: $auth_key",
+                "accept: */*",
+                "cache-control: no-cache",
+                "content-type: application/json"
+              ),
+            ));
+
+            $response = curl_exec($curl);
+            $err = curl_error($curl);
+
+            curl_close($curl);
+
+            return $response;
+        }  elseif($otpConfig->mimo == 1) {
+            $token = MimoUtility::getToken();
+            // dd('Token is:'.$token);
+            MimoUtility::sendMessage($text, $to, $token);
+            MimoUtility::logout($token);
+            // dd('hello');
         }
     }
-}
-
-
-if (! function_exists('isUnique')) {
-    /**
-     * Generate an asset path for the application.
-     *
-     * @param  string  $path
-     * @param  bool|null  $secure
-     * @return string
-     */
-    function isUnique($email)
-    {
-        $user = \App\User::where('email', $email)->first();
-
-        if($user == null) {
-            return '1'; // $user = null means we did not get any match with the email provided by the user inside the database
-        } else {
-            return '0';
-        }
-    }
-}
-
-if (!function_exists('get_setting')) {
-    function get_setting($key, $default = null)
-    {
-        $setting = getBusinessSetting()->where('type', $key)->first();
-        return $setting == null ? $default : $setting->value;
-    }
-}
-
-function hex2rgba($color, $opacity = false) {
-
-    $default = 'rgb(230,46,4)';
-
-    //Return default if no color provided
-    if(empty($color))
-          return $default;
-
-    //Sanitize $color if "#" is provided
-    if ($color[0] == '#' ) {
-        $color = substr( $color, 1 );
-    }
-
-    //Check if color has 6 or 3 characters and get values
-    if (strlen($color) == 6) {
-        $hex = array( $color[0] . $color[1], $color[2] . $color[3], $color[4] . $color[5] );
-    } elseif ( strlen( $color ) == 3 ) {
-        $hex = array( $color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2] );
-    } else {
-        return $default;
-    }
-
-    //Convert hexadec to rgb
-    $rgb = array_map('hexdec', $hex);
-
-    //Check if opacity is set(rgba or rgb)
-    if($opacity){
-        if(abs($opacity) > 1)
-            $opacity = 1.0;
-        $output = 'rgba('.implode(",",$rgb).','.$opacity.')';
-    } else {
-        $output = 'rgb('.implode(",",$rgb).')';
-    }
-
-    //Return rgb(a) color string
-    return $output;
-}
-
-if (!function_exists('isAdmin')) {
-    function isAdmin()
-    {
-        if (Auth::check() && (Auth::user()->user_type == 'admin' || Auth::user()->user_type == 'staff')) {
-            return true;
-        }
-        return false;
-    }
-}
-
-if (!function_exists('isSeller')) {
-    function isSeller()
-    {
-        if (Auth::check() && Auth::user()->user_type == 'seller') {
-            return true;
-        }
-        return false;
-    }
-}
 
 if (!function_exists('isCustomer')) {
     function isCustomer()
