@@ -66,7 +66,7 @@ class ProductDetailCollectionfav extends ResourceCollection
                     'shipping_cost' => (double) $data->shipping_cost,
                     'number_of_sales' => (integer) $data->num_of_sale,
                     'rating' => (double) $data->rating,
-                    'rating_count' => (integer) Review::where(['product_id' => $data->id])->count(),
+                    'rating_count' => $data->reviews->count(),
                     'description' => strip_tags($data->description1),
                     'links' => [
                         'reviews' => route('api.reviews.index', $data->id),
@@ -86,10 +86,12 @@ class ProductDetailCollectionfav extends ResourceCollection
     }
 
     protected function convertToChoiceOptions($data){
+    protected function convertToChoiceOptions($data){
         $result = array();
+        $attributes = Attribute::all();
         foreach ($data as $key => $choice) {
             $item['name'] = $choice->attribute_id;
-            $item['title'] = Attribute::find($choice->attribute_id)->name;
+            $item['title'] = $attributes->firstWhere('id', $choice->attribute_id)->name;
             $item['options'] = $choice->values;
             array_push($result, $item);
         }
