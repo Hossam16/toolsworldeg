@@ -487,8 +487,6 @@ class HomeController extends Controller
                             )
                             ->orderByDesc('relevance_score')
                             ->with('category', 'brand');
-                            ->with('category', 'brand');
-            $subQueries = explode(" ", $query);
 
             // Create queries with decreasing lengths and add them to the main query
             for ($i = count($subQueries); $i >= 1; $i--) {
