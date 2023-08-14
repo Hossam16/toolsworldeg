@@ -1,4 +1,6 @@
 ALTER TABLE `products` ADD `rating` DOUBLE(8,2) NOT NULL DEFAULT '0' AFTER `slug`;
+CREATE INDEX idx_products_rating ON products(rating);
+CREATE INDEX idx_products_rating ON products(rating);
 
 ALTER TABLE `reviews` ADD `status` INT(1) NOT NULL DEFAULT '1' AFTER `comment`;
 
