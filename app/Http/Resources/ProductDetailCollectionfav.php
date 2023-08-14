@@ -82,27 +82,5 @@ class ProductDetailCollectionfav extends ResourceCollection
         return [
             'success' => true,
             'status' => 200
-        ];
-    }
-
-    protected function convertToChoiceOptions($data){
-    protected function convertToChoiceOptions($data){
-        $result = array();
-        $attributes = Attribute::all();
-        foreach ($data as $key => $choice) {
-            $item['name'] = $choice->attribute_id;
-            $item['title'] = $attributes->firstWhere('id', $choice->attribute_id)->name;
-            $item['options'] = $choice->values;
-            array_push($result, $item);
-        }
-        return $result;
-    }
-
-    protected function convertPhotos($data){
-        $result = array();
-        foreach ($data as $key => $item) {
-            array_push($result, api_asset($item));
-        }
-        return $result;
-    }
+    // Removed unused function convertToChoiceOptions
 }
