@@ -298,7 +298,9 @@ class HomeController extends Controller
 
     public function show_product_upload_form(Request $request)
     {
-        if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+        $seller_subscription = \App\Addon::where('unique_identifier', 'seller_subscription')->first();
+        $seller_subscription = \App\Addon::where('unique_identifier', 'seller_subscription')->first();
+        if ($seller_subscription != null && $seller_subscription->activated) {
             if (Auth::user()->seller->remaining_uploads > 0) {
                 $categories = Category::all();
                 return view('frontend.user.seller.product_upload', compact('categories'));
@@ -307,8 +309,8 @@ class HomeController extends Controller
                 return back();
             }
         }
-        $categories = getCategories()->where('parent_id', 0)
-            ->where('digital', 0)
+        $categories = Category::all();
+        return view('frontend.user.seller.product_upload', compact('categories'));
             ->with('childrenCategories')
             ->get();
         return view('frontend.user.seller.product_upload', compact('categories'));
@@ -459,7 +461,7 @@ class HomeController extends Controller
             $conditions['user_id'] = $seller->user->id;
         }
 
-        $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions);
+        $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions)->get();
 
         if ($category_id != null && $category_id != "null") {
             $category_ids = CategoryUtility::children_ids($category_id);
@@ -765,7 +767,9 @@ class HomeController extends Controller
     }
     public function show_digital_product_upload_form(Request $request)
     {
-        if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+        $seller_subscription = \App\Addon::where('unique_identifier', 'seller_subscription')->first();
+        $seller_subscription = \App\Addon::where('unique_identifier', 'seller_subscription')->first();
+        if ($seller_subscription != null && $seller_subscription->activated) {
             if (Auth::user()->seller->remaining_digital_uploads > 0) {
                 $business_settings = getBusinessSetting()->where('type', 'digital_product_upload')->first();
                 $categories = getCategories()->where('digital', 1)->get();
@@ -792,14 +796,11 @@ class HomeController extends Controller
     // Ajax call
     public function new_verify(Request $request)
     {
-        $email = $request->email;
-        if (isUnique($email) == '0') {
-            $response['status'] = 2;
-            $response['message'] = 'Email already exists!';
-            return json_encode($response);
-        }
+        $request->validate([
+            'email' => 'unique:users'
+        ]);
 
-        $response = $this->send_email_change_verification_mail($request, $email);
+        $response = $this->send_email_change_verification_mail($request, $request->email);
         return json_encode($response);
     }
 
