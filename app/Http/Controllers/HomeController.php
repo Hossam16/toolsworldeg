@@ -460,16 +460,16 @@ class HomeController extends Controller
         }
 
         $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions);
-
+        
         if ($category_id != null && $category_id != "null") {
             $category_ids = CategoryUtility::children_ids($category_id);
             $category_ids[] = $category_id;
-
-            $products = $products->whereIn('category_id', $category_ids);
+        
+            // Use whereHas instead of whereIn for better performance
+            $products = $products->whereHas('category', function ($query) use ($category_ids) {
+                $query->whereIn('id', $category_ids);
+            });
         }
-
-        if ($min_price != null && $max_price != null) {
-            $products = $products->where('unit_price', '>=', $min_price)->where('unit_price', '<=', $max_price);
         }
 
         if ($query != null) {
