@@ -825,15 +825,9 @@ if (!function_exists('getBusinessSetting')) {
     function getBusinessSetting($cacheDuration = 3600) {
         $cacheKey = 'business_settings';
 
-        $businessSetting = Cache::get($cacheKey);
-
-        if ($businessSetting === null) {
-            // Cache expired or not found, retrieve and cache the business setting
-            $businessSetting = BusinessSetting::all();
-            Cache::put($cacheKey, $businessSetting, $cacheDuration);
-        }
-
-        return $businessSetting;
+        return Cache::remember($cacheKey, $cacheDuration, function () {
+            return BusinessSetting::all();
+        });
     }
 }
 
@@ -841,15 +835,9 @@ if (!function_exists('getCurrencies')) {
     function getCurrencies($cacheDuration = 3600) {
         $cacheKey = 'currencies';
 
-        $Currencies = Cache::get($cacheKey);
-
-        if ($Currencies === null) {
-            // Cache expired or not found, retrieve and cache the business setting
-            $Currencies = Currency::all();
-            Cache::put($cacheKey, $Currencies, $cacheDuration);
-        }
-
-        return $Currencies;
+        return Cache::remember($cacheKey, $cacheDuration, function () {
+            return Currency::all();
+        });
     }
 }
 
