@@ -46,7 +46,11 @@ class TranslationUtility
             return $item['lang_key'] == $lang_key && $item['lang'] == $lang;
         });
         
-        $row = reset($filtered); // Get the first item of the filtered array
+        if (!empty($filtered)) {
+            $row = reset($filtered); // Get the first item of the filtered array
+        }
+            $row = reset($filtered); // Get the first item of the filtered array
+        }
 
         return $row;
     }
