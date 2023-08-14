@@ -112,21 +112,21 @@ class Product extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->with('products');
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->with('products');
     }
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class)->with('products');
     }
 
     public function stocks()
     {
-        return $this->hasMany(ProductStock::class);
+        return $this->hasMany(ProductStock::class)->with('product');
     }
 }
