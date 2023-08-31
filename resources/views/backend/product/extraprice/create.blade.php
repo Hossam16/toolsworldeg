@@ -21,7 +21,7 @@
                     <div class="col-md-9">
                         <select class="select2 form-control aiz-selectpicker" name="parent_id" data-toggle="select2" data-placeholder="Choose ..." data-live-search="true">
                             <option value="0">{{ translate('No Parent') }}</option>
-                            @foreach(\App\Category::all() as $category)
+                            @foreach(getCachedCategories()->all() as $category)
                                 <option value="{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
                             @endforeach
                         </select>

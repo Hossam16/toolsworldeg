@@ -392,7 +392,7 @@ class OrderController extends Controller
                 }
             }
 
-            if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_order')->first()->value){
+            if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_order')->first()->value){
                 try {
                     $otpController = new OTPVerificationController;
                     $otpController->send_order_code($order);
@@ -506,7 +506,7 @@ class OrderController extends Controller
             }
         }
 
-        if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_delivery_status')->first()->value){
+        if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_delivery_status')->first()->value){
             try {
                 $otpController = new OTPVerificationController;
                 $otpController->send_delivery_status($order);
@@ -547,7 +547,7 @@ class OrderController extends Controller
 
 
         if($order->payment_status == 'paid' && $order->commission_calculated == 0){
-            if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() == null || !\App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+            if(getAddons()->where('unique_identifier', 'seller_subscription')->first() == null || !getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated){
                 if ($order->payment_type == 'cash_on_delivery') {
                     if (getBusinessSetting()->where('type', 'category_wise_commission')->first()->value != 1) {
                         $commission_percentage = getBusinessSetting()->where('type', 'vendor_commission')->first()->value;
@@ -602,12 +602,12 @@ class OrderController extends Controller
                 }
             }
 
-            if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+            if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated) {
                 $affiliateController = new AffiliateController;
                 $affiliateController->processAffiliatePoints($order);
             }
 
-            if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated) {
+            if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated) {
                 if ($order->user != null) {
                     $clubpointController = new ClubPointController;
                     $clubpointController->processClubPoints($order);
@@ -618,7 +618,7 @@ class OrderController extends Controller
             $order->save();
         }
 
-        if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_paid_status')->first()->value){
+        if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated && \App\OtpConfiguration::where('type', 'otp_for_paid_status')->first()->value){
             try {
                 $otpController = new OTPVerificationController;
                 $otpController->send_payment_status($order);

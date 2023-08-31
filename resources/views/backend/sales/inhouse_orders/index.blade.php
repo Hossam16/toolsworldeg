@@ -2,7 +2,7 @@
 
 @section('content')
 @php
-    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+    $refund_request_addon = getAddons()->where('unique_identifier', 'refund_request')->first();
 @endphp
 
 <div class="card">

@@ -17,7 +17,7 @@ class FlashDealCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $flash_deal = FlashDeal::findOrFail($this->collection->first()->id);
+        $flash_deal = getFlashDeals()->where('id',$this->collection->first()->id);
         $products = collect();
         foreach ($flash_deal->flashDealProducts as $key => $flash_deal_product) {
             if(Product::find($flash_deal_product->product_id) != null){

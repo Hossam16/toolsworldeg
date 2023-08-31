@@ -12,7 +12,7 @@
                 @php
                      $todays_deal =(filter_products(\App\Product::where('published', 1)->where('todays_deal', 1 ))->get());
                     $num_todays_deal = count($todays_deal);
-                    $featured_categories = \App\Category::where('featured', 1)->get();
+                    $featured_categories = getCachedCategories()->where('featured', 1)->all();
                 @endphp
 
                 <div class="@if($num_todays_deal > 0) col-lg-7 @else col-lg-9 @endif">
@@ -112,7 +112,7 @@
 
     {{-- Flash Deal --}}
     @php
-        $flash_deal = \App\FlashDeal::where('status', 1)->where('featured', 1)->first();
+        $flash_deal = getFlashDeals()->where('status', 1)->where('featured', 1)->first();
     @endphp
     @if($flash_deal != null && strtotime(date('Y-m-d H:i:s')) >= $flash_deal->start_date && strtotime(date('Y-m-d H:i:s')) <= $flash_deal->end_date)
     <section class="mb-4">
@@ -170,7 +170,7 @@
                                         <h3 class="fw-600 fs-13 text-truncate-2 lh-1-4 mb-0 h-35px">
                                             <a href="{{ route('product', $product->slug) }}" class="d-block text-reset">{{  $product->getTranslation('name')  }}</a>
                                         </h3>
-                                        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                                        @if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                                             <div class="rounded px-2 mt-2 bg-soft-primary border-soft-primary border">
                                                 {{ translate('Club Point') }}:
                                                 <span class="fw-700 float-right">{{ $product->earn_point }}</span>
@@ -319,7 +319,7 @@
                         <div class="row gutters-5">
                             @php $top10_categories = json_decode(get_setting('top10_categories')); @endphp
                             @foreach ($top10_categories as $key => $value)
-                                @php $category = \App\Category::find($value); @endphp
+                                @php $category = getCachedCategories()->find($value); @endphp
                                 @if ($category != null)
                                     <div class="col-sm-6">
                                         <a href="{{ route('products.category', $category->slug) }}" class="bg-white border d-block text-reset rounded p-2 hov-shadow-md mb-2">
@@ -358,7 +358,7 @@
                         <div class="row gutters-5">
                             @php $top10_brands = json_decode(get_setting('top10_brands')); @endphp
                             @foreach ($top10_brands as $key => $value)
-                                @php $brand = \App\Brand::find($value); @endphp
+                                @php $brand = getBrands()->find($value); @endphp
                                 @if ($brand != null)
                                     <div class="col-sm-6">
                                         <a href="{{ route('products.brand', $brand->slug) }}" class="bg-white border d-block text-reset rounded p-2 hov-shadow-md mb-2">

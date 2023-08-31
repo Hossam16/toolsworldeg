@@ -41,15 +41,11 @@ class TranslationUtility
         }
 
 
-        // Use array_filter instead of foreach for better performance
-        $filtered = array_filter($this->translations, function ($item) use ($lang_key, $lang) {
-            return $item['lang_key'] == $lang_key && $item['lang'] == $lang;
-        });
-        
-        if (!empty($filtered)) {
-            $row = reset($filtered); // Get the first item of the filtered array
-        }
-            $row = reset($filtered); // Get the first item of the filtered array
+        foreach ($this->translations as $item) {
+            if ($item['lang_key'] == $lang_key && $item['lang'] == $lang) {
+                $row = $item;
+                break;
+            }
         }
 
         return $row;

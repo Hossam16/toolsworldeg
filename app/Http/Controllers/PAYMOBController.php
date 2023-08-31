@@ -26,7 +26,7 @@ $headers  = [
             'Content-Type: application/json'
         ];
 $postData = [
-    'api_key' => env('PAYMOB_API_KEY')
+    'api_key' => env('PAYMOB_API_KEY',"ZXlKaGJHY2lPaUpJVXpVeE1pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnVZVzFsSWpvaWFXNXBkR2xoYkNJc0ltTnNZWE56SWpvaVRXVnlZMmhoYm5RaUxDSndjbTltYVd4bFgzQnJJam94TkRJeE16RjkuSmhGS0lMSnY3RlNTVTFCYUJYa01zQlhDeENBeE5OLXQ3MUp4R3ZsZXZFdWFKVE5LQnNNUHpfQklXdkRpcVluWE1DZkppa2hrNGRDTWxiOF9laG9UeFE=")
     
 ];
 curl_setopt($ch, CURLOPT_URL,"https://accept.paymobsolutions.com/api/auth/tokens");
@@ -90,7 +90,6 @@ $output2 = curl_exec($ch2);
 curl_close($ch2);
 
 $jsonArrayResponse2 = json_decode($output2);
-
 $order_id=$jsonArrayResponse2->id;
 
 
@@ -123,7 +122,7 @@ $postData3 = [
 		],
 		
 		'currency' => 'EGP',
-		'integration_id' =>env('PAYMOB_MERCHANT_ID'),
+		'integration_id' =>env('PAYMOB_MERCHANT_ID', "1719558"),
 		'lock_order_when_paid'=>'false'
      
 ];
@@ -136,7 +135,6 @@ $output3 = curl_exec($ch3);
 curl_close($ch3);
 
 $jsonArrayResponse3 = json_decode($output3);
-//print_r($jsonArrayResponse3);
 
  $paytoken=$jsonArrayResponse3->token;
 

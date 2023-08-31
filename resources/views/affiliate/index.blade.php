@@ -134,7 +134,7 @@
                         </div>
                         @if (\App\AffiliateOption::where('type', 'category_wise_affiliate')->first() != null)
                             <input type="hidden" name="type" value="category_wise_affiliate">
-                            @foreach (\App\Category::all() as $key => $category)
+                            @foreach (getCachedCategories()->all() as $key => $category)
                                 @php
                                     $found = false;
                                 @endphp
@@ -152,7 +152,7 @@
                                 <div class="form-group row">
                                   <div class="col-lg-5">
                                     <input type="hidden" name="categories_id_{{ $value->category_id }}" value="{{ $value->category_id }}">
-                                    <input type="text" class="form-control" value="{{ \App\Category::find($value->category_id)->name }}" readonly>
+                                    <input type="text" class="form-control" value="{{ getCachedCategories()->find($value->category_id)->name }}" readonly>
                                   </div>
                                   <div class="col-lg-4">
                                     <input type="number" min="0" step="0.01" class="form-control" name="commison_amounts_{{ $value->category_id }}" value="{{ $value->commission }}">

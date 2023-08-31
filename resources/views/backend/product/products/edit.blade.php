@@ -8,7 +8,7 @@
 	<form class="form form-horizontal mar-top" action="{{route('products.update', $product->id)}}" method="POST" enctype="multipart/form-data" id="choice_form">
 		<input name="_method" type="hidden" value="POST">
 		<input type="hidden" name="id" value="{{ $product->id }}">
-        <input type="hidden" name="lang" value="{{ $lang }}">
+        <input type="hidden" name="lang" value="eg">
 		@csrf
 		<div class="card">
             <ul class="nav nav-tabs nav-fill border-light">
@@ -58,7 +58,7 @@
                     <div class="col-lg-8">
                         <select class="form-control aiz-selectpicker" name="brand_id" id="brand_id" data-live-search="true">
 							<option value="">{{ ('Select Brand') }}</option>
-							@foreach (\App\Brand::all() as $brand)
+							@foreach (getBrands()->all() as $brand)
 								<option value="{{ $brand->id }}" @if($product->brand_id == $brand->id) selected @endif>{{ $brand->getTranslation('name') }}</option>
 							@endforeach
                         </select>
@@ -83,7 +83,7 @@
                     </div>
                 </div>
 				@php
-				    $pos_addon = \App\Addon::where('unique_identifier', 'pos_system')->first();
+				    $pos_addon = getAddons()->where('unique_identifier', 'pos_system')->first();
 				@endphp
 				@if ($pos_addon != null && $pos_addon->activated == 1)
 					<div class="form-group row">
@@ -95,7 +95,7 @@
 				@endif
 
 				@php
-				    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+				    $refund_request_addon = getAddons()->where('unique_identifier', 'refund_request')->first();
 				@endphp
 				@if ($refund_request_addon != null && $refund_request_addon->activated == 1)
 					<div class="form-group row">

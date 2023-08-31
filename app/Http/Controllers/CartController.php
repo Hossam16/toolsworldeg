@@ -82,7 +82,7 @@ class CartController extends Controller
 
         //discount calculation based on flash deal and regular discount
         //calculation of taxes
-        $flash_deals = \App\FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1  && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && \App\FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first() != null) {

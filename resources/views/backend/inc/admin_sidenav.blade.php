@@ -24,7 +24,7 @@
                 </li>
 
                 <!-- POS Addon-->
-                @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'pos_system')->first() != null && getAddons()->where('unique_identifier', 'pos_system')->first()->activated)
                     @if(Auth::user()->user_type == 'admin' || in_array('1', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -172,7 +172,7 @@
                 </li>
 
                 <!-- Refund addon -->
-                @if (\App\Addon::where('unique_identifier', 'refund_request')->first() != null && \App\Addon::where('unique_identifier', 'refund_request')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'refund_request')->first() != null && getAddons()->where('unique_identifier', 'refund_request')->first()->activated)
                     @if(Auth::user()->user_type == 'admin' || in_array('7', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                           <a href="#" class="aiz-side-nav-link">
@@ -265,7 +265,7 @@
                                     <span class="aiz-side-nav-text">{{ translate('Seller Commission') }}</span>
                                 </a>
                             </li>
-                            @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+                            @if (getAddons()->where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated)
                                 <li class="aiz-side-nav-item">
                                     <a href="{{ route('seller_packages.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['seller_packages.index', 'seller_packages.create', 'seller_packages.edit'])}}">
                                         <span class="aiz-side-nav-text">{{ translate('Seller Packages') }}</span>
@@ -353,7 +353,7 @@
                                         <span class="aiz-side-nav-text">{{ translate('Notifications') }}</span>
                                     </a>
                                 </li>
-                                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                                @if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated)
                                     <li class="aiz-side-nav-item">
                                         <a href="{{route('sms.index')}}" class="aiz-side-nav-link">
                                             <span class="aiz-side-nav-text">{{ translate('Bulk SMS') }}</span>
@@ -417,7 +417,7 @@
                 @endif
 
                 <!-- Affiliate Addon -->
-                @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated)
                     @if(Auth::user()->user_type == 'admin' || in_array('15', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                           <a href="#" class="aiz-side-nav-link">
@@ -457,7 +457,7 @@
                 @endif
 
                 <!-- Offline Payment Addon-->
-                @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'offline_payment')->first() != null && getAddons()->where('unique_identifier', 'offline_payment')->first()->activated)
                     @if(Auth::user()->user_type == 'admin' || in_array('16', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                           <a href="#" class="aiz-side-nav-link">
@@ -483,7 +483,7 @@
                                       </a>
                                   </li>
                               @endif
-                              @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+                              @if (getAddons()->where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated)
                                   <li class="aiz-side-nav-item">
                                       <a href="{{ route('offline_seller_package_payment_request.index') }}" class="aiz-side-nav-link">
                                           <span class="aiz-side-nav-text">{{translate('Offline Seller Package Payments')}}</span>
@@ -496,7 +496,7 @@
                 @endif
 
                 <!-- Paytm Addon -->
-                @if (\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'paytm')->first() != null && getAddons()->where('unique_identifier', 'paytm')->first()->activated)
                     @if(Auth::user()->user_type == 'admin' || in_array('17', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                           <a href="#" class="aiz-side-nav-link">
@@ -516,7 +516,7 @@
                 @endif
 
                 <!-- Club Point Addon-->
-                @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                   @if(Auth::user()->user_type == 'admin' || in_array('18', json_decode(Auth::user()->staff->role->permissions)))
                     <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -546,7 +546,7 @@
                 @endif
 
                 <!--OTP addon -->
-                @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated)
                   @if(Auth::user()->user_type == 'admin' || in_array('19', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">
@@ -570,7 +570,7 @@
                   @endif
                 @endif
 
-                @if(\App\Addon::where('unique_identifier', 'african_pg')->first() != null && \App\Addon::where('unique_identifier', 'african_pg')->first()->activated)
+                @if(getAddons()->where('unique_identifier', 'african_pg')->first() != null && getAddons()->where('unique_identifier', 'african_pg')->first()->activated)
                   @if(Auth::user()->user_type == 'admin' || in_array('19', json_decode(Auth::user()->staff->role->permissions)))
                       <li class="aiz-side-nav-item">
                         <a href="#" class="aiz-side-nav-link">

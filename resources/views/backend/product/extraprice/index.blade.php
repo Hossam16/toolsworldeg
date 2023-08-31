@@ -39,7 +39,7 @@
             <tbody>
                 @foreach($categories as $key => $item)
 				 @php
-                                $brand = \App\Brand::where('id', $item->item_id)->first();
+                                $brand = getBrands()->where('id', $item->item_id)->first();
                             @endphp
                     <tr>
                         <td>{{ ($key+1) + ($categories->currentPage() - 1)*$categories->perPage() }}</td>

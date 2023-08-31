@@ -11,7 +11,7 @@
                                 $locale = Session::get('locale', Config::get('app.locale'));
                             }
                             else{
-                                $locale = 'en';
+                                $locale = 'eg';
                             }
                         @endphp
                         <a href="javascript:void(0)" class="dropdown-toggle text-reset py-2" data-toggle="dropdown" data-display="static">
@@ -45,7 +45,7 @@
                             {{ getCurrencies()->where('code', $currency_code)->first()->name }} {{ (getCurrencies()->where('code', $currency_code)->first()->symbol) }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-                            @foreach (getCurrencies()->where('status', 1)->get() as $key => $currency)
+                            @foreach (getCurrencies()->where('status', 1)->all() as $key => $currency)
                                 <li>
                                     <a class="dropdown-item @if($currency_code == $currency->code) active @endif" href="javascript:void(0)" data-currency="{{ $currency->code }}">{{ $currency->name }} ({{ $currency->symbol }})</a>
                                 </li>

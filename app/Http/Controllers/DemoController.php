@@ -132,7 +132,7 @@ class DemoController extends Controller
         //     }
         // }
         //
-        // foreach (Brand::all() as $key => $brand) {
+        // foreach (getBrands()->all() as $key => $brand) {
         //     if ($brand->logo != null) {
         //         $arr = explode('.', $brand->logo);
         //         $upload = Upload::create([
@@ -218,7 +218,7 @@ class DemoController extends Controller
         //     }
         // }
 
-        // foreach (FlashDeal::all() as $key => $flash_deal) {
+        // foreach (getFlashDeals()->all() as $key => $flash_deal) {
         //     if ($flash_deal->banner != null) {
         //         $arr = explode('.', $flash_deal->banner);
         //         $upload = Upload::create([
@@ -374,7 +374,7 @@ class DemoController extends Controller
         // $business_setting->save();
         //
         // $business_setting = getBusinessSetting()->where('type', 'top10_brands')->first();
-        // $business_setting->value = json_encode(Brand::where('top', 1)->pluck('id')->toArray());
+        // $business_setting->value = json_encode(getBrands()->where('top', 1)->pluck('id')->toArray());
         // $business_setting->save();
 
         // $code = 'en';

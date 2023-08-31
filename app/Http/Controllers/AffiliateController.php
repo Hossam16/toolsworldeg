@@ -268,7 +268,7 @@ class AffiliateController extends Controller
     }
 
     public function processAffiliatePoints(Order $order){
-        if(Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated){
+        if(getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && \App\getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated){
             if(AffiliateOption::where('type', 'user_registration_first_purchase')->first()->status){
                 if ($order->user != null && $order->user->orders->count() == 1) {
                     if($order->user->referred_by != null){

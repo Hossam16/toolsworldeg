@@ -153,16 +153,16 @@ class CheckoutController extends Controller
         $order->save();
 
         
-        if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated) {
+        if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated) {
             $affiliateController = new AffiliateController;
             $affiliateController->processAffiliatePoints($order);
         }
 
-        if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated) {
+        if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated) {
             $clubpointController = new ClubPointController;
             $clubpointController->processClubPoints($order);
         }
-        if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() == null || !\App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+        if (getAddons()->where('unique_identifier', 'seller_subscription')->first() == null || !getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated) {
             if (getBusinessSetting()->where('type', 'category_wise_commission')->first()->value != 1) {
                 $commission_percentage = getBusinessSetting()->where('type', 'vendor_commission')->first()->value;
                 foreach ($order->orderDetails as $key => $orderDetail) {

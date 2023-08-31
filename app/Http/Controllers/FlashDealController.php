@@ -99,7 +99,7 @@ class FlashDealController extends Controller
     public function edit(Request $request, $id)
     {
         $lang           = $request->lang;
-        $flash_deal = FlashDeal::findOrFail($id);
+        $flash_deal = getFlashDeals()->where('id',$id);
         return view('backend.marketing.flash_deals.edit', compact('flash_deal','lang'));
     }
 
@@ -112,7 +112,7 @@ class FlashDealController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $flash_deal = FlashDeal::findOrFail($id);
+        $flash_deal = FlashDeal::where('id',$id);
 
         $flash_deal->text_color = $request->text_color;
 
@@ -164,7 +164,7 @@ class FlashDealController extends Controller
      */
     public function destroy($id)
     {
-        $flash_deal = FlashDeal::findOrFail($id);
+        $flash_deal = FlashDeal::where('id',$id);
         foreach ($flash_deal->flash_deal_products as $key => $flash_deal_product) {
             $flash_deal_product->delete();
         }
@@ -180,7 +180,7 @@ class FlashDealController extends Controller
 
     public function update_status(Request $request)
     {
-        $flash_deal = FlashDeal::findOrFail($request->id);
+        $flash_deal = FlashDeal::where('id',$request->id);
         $flash_deal->status = $request->status;
         if($flash_deal->save()){
             flash(translate('Flash deal status updated successfully'))->success();
@@ -195,7 +195,7 @@ class FlashDealController extends Controller
             $flash_deal->featured = 0;
             $flash_deal->save();
         }
-        $flash_deal = FlashDeal::findOrFail($request->id);
+        $flash_deal = FlashDeal::where('id',$request->id);
         $flash_deal->featured = $request->featured;
         if($flash_deal->save()){
             flash(translate('Flash deal status updated successfully'))->success();

@@ -47,7 +47,7 @@
                         <td>{{ $category->getTranslation('name') }}</td>
                         <td>
                             @php
-                                $parent = \App\Category::where('id', $category->parent_id)->first();
+                                $parent = getCachedCategories()->where('id', $category->parent_id)->first();
                             @endphp
                             @if ($parent != null)
                                 {{ $parent->getTranslation('name') }}

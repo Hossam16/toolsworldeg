@@ -62,7 +62,7 @@
                                             <a href="{{ route('product', $product->slug) }}" class="d-block text-reset">{{  $product->getTranslation('name')  }}</a>
                                         </h3>
 
-                                        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                                        @if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                                             <div class="rounded px-2 mt-2 bg-soft-primary border-soft-primary border">
                                                 {{ translate('Club Point') }}:
                                                 <span class="fw-700 float-right">{{ $product->earn_point }}</span>

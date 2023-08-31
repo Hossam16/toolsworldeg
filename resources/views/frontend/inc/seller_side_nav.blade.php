@@ -28,8 +28,8 @@
                 @php
                     $delivery_viewed = App\Order::where('user_id', Auth::user()->id)->where('delivery_viewed', 0)->get()->count();
                     $payment_status_viewed = App\Order::where('user_id', Auth::user()->id)->where('payment_status_viewed', 0)->get()->count();
-                    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-                    $club_point_addon = \App\Addon::where('unique_identifier', 'club_point')->first();
+                    $refund_request_addon = getAddons()->where('unique_identifier', 'refund_request')->first();
+                    $club_point_addon = getAddons()->where('unique_identifier', 'club_point')->first();
                 @endphp
                 <li>
                     <a href="{{ route('purchase_history.index') }}" class="{{ areActiveRoutesHome(['purchase_history.index'])}}">
@@ -81,7 +81,7 @@
                     </a>
                 </li>
                 @endif
-                @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                @if (getAddons()->where('unique_identifier', 'pos_system')->first() != null && getAddons()->where('unique_identifier', 'pos_system')->first()->activated)
                     @if (getBusinessSetting()->where('type', 'pos_activation_for_seller')->first() != null && getBusinessSetting()->where('type', 'pos_activation_for_seller')->first()->value != 0)
                         <li>
                             <a href="{{route('poin-of-sales.seller_index')}}" class="{{ areActiveRoutesHome(['poin-of-sales.seller_index'])}}">
@@ -217,7 +217,7 @@
                         </a>
                     </li>
                 @endif
-                @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
+                @if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
                     <li>
                         <a href="{{ route('affiliate.user.index') }}" class="{{ areActiveRoutesHome(['affiliate.user.index', 'affiliate.payment_settings'])}}">
                             <i class="la la-dollar"></i>

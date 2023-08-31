@@ -64,8 +64,8 @@
                 </li>
 
                 @php
-                    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
-                    $club_point_addon = \App\Addon::where('unique_identifier', 'club_point')->first();
+                    $refund_request_addon = getAddons()->where('unique_identifier', 'refund_request')->first();
+                    $club_point_addon = getAddons()->where('unique_identifier', 'club_point')->first();
                 @endphp
                 @if ($refund_request_addon != null && $refund_request_addon->activated == 1)
                     <li class="aiz-side-nav-item">
@@ -114,7 +114,7 @@
                 @endif
 
                 @if(Auth::user()->user_type == 'seller')
-                    @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                    @if (getAddons()->where('unique_identifier', 'pos_system')->first() != null && getAddons()->where('unique_identifier', 'pos_system')->first()->activated)
                         @if (getBusinessSetting()->where('type', 'pos_activation_for_seller')->first() != null && getBusinessSetting()->where('type', 'pos_activation_for_seller')->first()->value != 0)
                             <li class="aiz-side-nav-item">
                                 <a href="{{ route('poin-of-sales.seller_index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['poin-of-sales.seller_index'])}}">
@@ -227,7 +227,7 @@
                     </li>
                 @endif
 
-                @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
+                @if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated && Auth::user()->affiliate_user != null && Auth::user()->affiliate_user->status)
                     <li class="aiz-side-nav-item">
                         <a href="{{ route('affiliate.user.index') }}" class="aiz-side-nav-link {{ areActiveRoutes(['affiliate.user.index', 'affiliate.payment_settings'])}}">
                             <i class="las la-dollar-sign aiz-side-nav-icon"></i>

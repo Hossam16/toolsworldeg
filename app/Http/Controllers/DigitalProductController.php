@@ -101,7 +101,7 @@ class DigitalProductController extends Controller
                 return redirect()->route('digitalproducts.index');
             }
             else{
-                if(\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated){
+                if(getAddons()->where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated){
                     $seller = Auth::user()->seller;
                     $seller->remaining_digital_uploads -= 1;
                     $seller->save();

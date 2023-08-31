@@ -28,6 +28,9 @@ use Mail;
 use App\Utility\TranslationUtility;
 use App\Utility\CategoryUtility;
 use Illuminate\Support\Arr;
+use App;
+use Illuminate\Support\Facades\Cache;
+
 
 class HomeController extends Controller
 {
@@ -191,7 +194,7 @@ class HomeController extends Controller
 
     public function flash_deal_details($slug)
     {
-        $flash_deal = FlashDeal::where('slug', $slug)->first();
+        $flash_deal = getFlashDeals()->where('slug', $slug)->first();
         if ($flash_deal != null)
             return view('frontend.flash_deal_details', compact('flash_deal'));
         else {
@@ -211,7 +214,40 @@ class HomeController extends Controller
 
     public function load_home_categories_section()
     {
-        return view('frontend.partials.home_categories_section');
+        $cacheKey = 'home_categories_section';
+        $cacheDuration = 3600;
+        $categories = Cache::get($cacheKey);
+
+        if ($categories === null) {
+            $lang =  App::getLocale();
+            $home_categories = json_decode(get_setting('home_categories'));
+
+            $categories = Category::whereIn('id', $home_categories)->get();
+            foreach ($categories as $category) {
+                $products = Product::select(
+                    "products.*",
+                    "uploads.file_name",
+                    "product_translations.name as tranlated_name",
+                    "product_translations.lang"
+                )
+                    ->join('uploads', 'uploads.id', '=', 'products.thumbnail_img')
+                    ->join('product_translations', 'product_translations.product_id', '=', 'products.id')
+                    ->where('products.published', 1)
+                    ->where('products.category_id', $category->id)
+                    ->where(function ($query) use ($lang) {
+                        if ($lang != 'en') {
+                            $query->where('product_translations.lang', '=', $lang);
+                        }
+                    })
+                    ->limit(12)->get();
+                $category->products = $products;
+            }
+
+            
+            Cache::put($cacheKey, $categories, $cacheDuration);
+        }
+
+        return view('frontend.partials.home_categories_section', compact('categories'));
     }
 
     public function load_best_sellers_section()
@@ -287,7 +323,7 @@ class HomeController extends Controller
 
     public function all_categories(Request $request)
     {
-        $categories = getCategories()->where('level', 0)->orderBy('name', 'asc')->get();
+        $categories = Category::where('level', 0)->orderBy('name', 'asc')->get();
         return view('frontend.all_category', compact('categories'));
     }
     public function all_brands(Request $request)
@@ -298,7 +334,7 @@ class HomeController extends Controller
 
     public function show_product_upload_form(Request $request)
     {
-        if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+        if (getAddons()->where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated) {
             if (Auth::user()->seller->remaining_uploads > 0) {
                 $categories = Category::all();
                 return view('frontend.user.seller.product_upload', compact('categories'));
@@ -339,36 +375,45 @@ class HomeController extends Controller
     }
 
     public function ajax_search(Request $request)
-    {
-        $keywords = array();
-        $products = Product::where('published', 1)->where('tags', 'like', '%' . $request->search . '%')->get();
-        foreach ($products as $key => $product) {
-            foreach (explode(',', $product->tags) as $key => $tag) {
-                if (stripos($tag, $request->search) !== false) {
-                    if (sizeof($keywords) > 5) {
-                        break;
-                    } else {
-                        if (!in_array(strtolower($tag), $keywords)) {
-                            array_push($keywords, strtolower($tag));
-                        }
-                    }
-                }
-            }
-        }
+{
+    $searchTerm = strtolower($request->search);
 
-        $products = filter_products(Product::where('published', 1)
-            ->where('name', 'like', '%' . $request->search . '%')
-            ->orWhere('sku', 'like', '%' . $request->search . '%'))->get()->take(3);
+    $products = Product::where('published', 1)
+        ->where(function ($query) use ($searchTerm) {
+            $query->where('name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('sku', 'like', '%' . $searchTerm . '%')
+                ->orWhere('tags', 'like', '%' . $searchTerm . '%');
+        })
+        ->take(3)
+        ->get();
 
-        $categories = getCategories()->where('name', 'like', '%' . $request->search . '%')->get()->take(3);
+    $categories = Category::where('name', 'like', '%' . $searchTerm . '%')->take(3)->get();
 
-        $shops = Shop::whereIn('user_id', verified_sellers_id())->where('name', 'like', '%' . $request->search . '%')->get()->take(3);
+    $shops = Shop::whereIn('user_id', verified_sellers_id())
+        ->where('name', 'like', '%' . $searchTerm . '%')
+        ->take(3)
+        ->get();
 
-        if (sizeof($keywords) > 0 || sizeof($categories) > 0 || sizeof($products) > 0 || sizeof($shops) > 0) {
-            return view('frontend.partials.search_content', compact('products', 'categories', 'keywords', 'shops'));
-        }
-        return '0';
+    // Combine all tags from products into a single collection
+    $tagsCollection = $products->flatMap(function ($product) {
+        return explode(',', $product->tags);
+    });
+
+    // Filter unique tags containing the search term
+    $keywords = $tagsCollection
+        ->filter(function ($tag) use ($searchTerm) {
+            return stripos($tag, $searchTerm) !== false;
+        })
+        ->unique()
+        ->take(5)
+        ->toArray();
+
+    if ($keywords || $categories->isNotEmpty() || $products->isNotEmpty() || $shops->isNotEmpty()) {
+        return view('frontend.partials.search_content', compact('products', 'categories', 'keywords', 'shops'));
     }
+
+    return '0';
+}
 
     public function listing(Request $request)
     {
@@ -377,7 +422,7 @@ class HomeController extends Controller
 
     public function listingByCategory(Request $request, $category_slug)
     {
-        $category = getCategories()->where('slug', $category_slug)->first();
+        $category = getCachedCategories()->where('slug', $category_slug)->first();
         if ($category != null) {
             return $this->search($request, $category->id);
         }
@@ -460,16 +505,16 @@ class HomeController extends Controller
         }
 
         $products = Product::select('id', 'name', 'slug', 'unit_price', 'unit_price', 'thumbnail_img', 'rating', 'earn_point')->where($conditions);
-        
+
         if ($category_id != null && $category_id != "null") {
             $category_ids = CategoryUtility::children_ids($category_id);
             $category_ids[] = $category_id;
-        
-            // Use whereHas instead of whereIn for better performance
-            $products = $products->whereHas('category', function ($query) use ($category_ids) {
-                $query->whereIn('id', $category_ids);
-            });
+
+            $products = $products->whereIn('category_id', $category_ids);
         }
+
+        if ($min_price != null && $max_price != null) {
+            $products = $products->where('unit_price', '>=', $min_price)->where('unit_price', '<=', $max_price);
         }
 
         if ($query != null) {
@@ -685,7 +730,7 @@ class HomeController extends Controller
         }
 
         //discount calculation
-        $flash_deals = \App\FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $key => $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && \App\FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first() != null) {
@@ -765,7 +810,7 @@ class HomeController extends Controller
     }
     public function show_digital_product_upload_form(Request $request)
     {
-        if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated) {
+        if (getAddons()->where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated) {
             if (Auth::user()->seller->remaining_digital_uploads > 0) {
                 $business_settings = getBusinessSetting()->where('type', 'digital_product_upload')->first();
                 $categories = getCategories()->where('digital', 1)->get();

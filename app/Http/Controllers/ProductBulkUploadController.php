@@ -70,7 +70,7 @@ class ProductBulkUploadController extends Controller
 
     public function pdf_download_brand()
     {
-        $brands = Brand::all();
+        $brands = getBrands()->all();
         $pdf = PDF::setOptions([
                         'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true,
                         'logOutputFile' => storage_path('logs/log.htm'),

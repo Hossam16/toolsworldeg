@@ -19,7 +19,7 @@
                                         <div class="form-group">
                                             <select name="poscategory" class="form-control form-control-sm aiz-selectpicker" data-live-search="true" onchange="filterProducts()">
                                                 <option value="">{{ translate('All Categories') }}</option>
-                                                @foreach (\App\Category::all() as $key => $category)
+                                                @foreach (getCachedCategories()->all() as $key => $category)
                                                     <option value="category-{{ $category->id }}">{{ $category->getTranslation('name') }}</option>
                                                     @foreach ($category->subcategories as $key => $subcategory)
                                                         <option value="subcategory-{{ $subcategory->id }}">- {{ $subcategory->getTranslation('name') }}</option>
@@ -37,7 +37,7 @@
                                         <div class="form-group">
                                             <select name="brand" class="form-control form-control-sm aiz-selectpicker" data-live-search="true" onchange="filterProducts()">
                                                 <option value="">{{ translate('All Brands') }}</option>
-                                                @foreach (\App\Brand::all() as $key => $brand)
+                                                @foreach (getBrands()->all() as $key => $brand)
                                                     <option value="{{ $brand->id }}">{{ $brand->getTranslation('name') }}</option>
                                                 @endforeach
                                             </select>

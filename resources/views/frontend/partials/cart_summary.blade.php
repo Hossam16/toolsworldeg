@@ -7,7 +7,7 @@
     </div>
 
     <div class="card-body">
-        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+        @if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated)
             @php
                 $total_point = 0;
             @endphp

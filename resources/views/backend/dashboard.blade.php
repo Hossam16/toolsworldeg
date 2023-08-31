@@ -48,7 +48,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Product category') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Category::all()->count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ getCachedCategories()->count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -62,7 +62,7 @@
                             <span class="fs-12 d-block">{{ translate('Total') }}</span>
                             {{ translate('Product brand') }}
                         </div>
-                        <div class="h3 fw-700 mb-3">{{ \App\Brand::all()->count() }}</div>
+                        <div class="h3 fw-700 mb-3">{{ getBrands()->count() }}</div>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
                         <path fill="rgba(255,255,255,0.3)" fill-opacity="1" d="M0,128L34.3,112C68.6,96,137,64,206,96C274.3,128,343,224,411,250.7C480,277,549,235,617,213.3C685.7,192,754,192,823,181.3C891.4,171,960,149,1029,117.3C1097.1,85,1166,43,1234,58.7C1302.9,75,1371,149,1406,186.7L1440,224L1440,320L1405.7,320C1371.4,320,1303,320,1234,320C1165.7,320,1097,320,1029,320C960,320,891,320,823,320C754.3,320,686,320,617,320C548.6,320,480,320,411,320C342.9,320,274,320,206,320C137.1,320,69,320,34,320L0,320Z"></path>
@@ -263,12 +263,12 @@
     });
     var sfs = {
             labels: [
-                @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                 '{{ $category->getTranslation('name') }}',
                 @endforeach
             ],
             datasets: [
-                @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                 {{ \App\Product::where('category_id', $category->id)->sum('num_of_sale') }},
                 @endforeach
             ]
@@ -277,14 +277,14 @@
         type: 'bar',
         data: {
             labels: [
-                @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                 '{{ $category->getTranslation('name') }}',
                 @endforeach
             ],
             datasets: [{
                 label: '{{ translate('Number of sale') }}',
                 data: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         @php
                             $category_ids = \App\Utility\CategoryUtility::children_ids($category->id);
                             $category_ids[] = $category->id;
@@ -293,12 +293,12 @@
                     @endforeach
                 ],
                 backgroundColor: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         'rgba(55, 125, 255, 0.4)',
                     @endforeach
                 ],
                 borderColor: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         'rgba(55, 125, 255, 1)',
                     @endforeach
                 ],
@@ -346,14 +346,14 @@
         type: 'bar',
         data: {
             labels: [
-                @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                 '{{ $category->getTranslation('name') }}',
                 @endforeach
             ],
             datasets: [{
                 label: '{{ translate('Number of Stock') }}',
                 data: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         @php
                             $category_ids = \App\Utility\CategoryUtility::children_ids($category->id);
                             $category_ids[] = $category->id;
@@ -375,12 +375,12 @@
                     @endforeach
                 ],
                 backgroundColor: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         'rgba(253, 57, 149, 0.4)',
                     @endforeach
                 ],
                 borderColor: [
-                    @foreach (\App\Category::where('level', 0)->get() as $key => $category)
+                    @foreach (getCachedCategories()->where('level', 0)->all() as $key => $category)
                         'rgba(253, 57, 149, 1)',
                     @endforeach
                 ],

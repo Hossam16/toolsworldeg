@@ -82,7 +82,7 @@ class AddonController extends Controller
                 //dd($random_dir, $json);
 
                 if (getBusinessSetting()->where('type', 'current_version')->first()->value >= $json['minimum_item_version']) {
-                    if (count(Addon::where('unique_identifier', $json['unique_identifier'])->get()) == 0) {
+                    if (count(getAddons()->where('unique_identifier', $json['unique_identifier'])->get()) == 0) {
                         $addon = new Addon;
                         $addon->name = $json['name'];
                         $addon->unique_identifier = $json['unique_identifier'];
@@ -144,7 +144,7 @@ class AddonController extends Controller
 
                         }
 
-                        $addon = Addon::where('unique_identifier', $json['unique_identifier'])->first();
+                        $addon = getAddons()->where('unique_identifier', $json['unique_identifier'])->first();
 
                         for ($i = $addon->version + 0.1; $i <= $json['version']; $i = $i + 0.1) {
                             // Run sql modifications
@@ -218,7 +218,7 @@ class AddonController extends Controller
      */
     public function activation(Request $request)
     {
-        $addon = Addon::find($request->id);
+        $addon = getAddons()->find($request->id);
         //$menu  = Menu::where('displayed_name', $addon->unique_identifier)->first();
         $addon->activated = $request->status;
 

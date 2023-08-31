@@ -8,7 +8,7 @@
 @php
     $status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->delivery_status;
     $payment_status = $order->orderDetails->where('seller_id', Auth::user()->id)->first()->payment_status;
-    $refund_request_addon = \App\Addon::where('unique_identifier', 'refund_request')->first();
+    $refund_request_addon = getAddons()->where('unique_identifier', 'refund_request')->first();
 @endphp
 
 <div class="modal-body gry-bg px-3 pt-0">

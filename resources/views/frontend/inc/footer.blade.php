@@ -146,8 +146,8 @@
                                 </a>
                             </li>
                             @if (
-                                \App\Addon::where('unique_identifier', 'affiliate_system')->first() != null &&
-                                    \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated)
+                                getAddons()->where('unique_identifier', 'affiliate_system')->first() != null &&
+                                    getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated)
                                 <li class="mb-2">
                                     <a class="opacity-50 hov-opacity-100 text-light"
                                         href="{{ route('affiliate.apply') }}">{{ translate('Be an affiliate partner') }}</a>

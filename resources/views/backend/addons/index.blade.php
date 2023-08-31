@@ -23,7 +23,7 @@
                     <div class="card">
                         <div class="card-body">
                             <ul class="list-group">
-                                @forelse(\App\Addon::all() as $key => $addon)
+                                @forelse(getAddons()->all() as $key => $addon)
                                     <li class="list-group-item">
                                         <div class="d-flex align-items-center">
                                             <img class="h-60px" src="{{ static_asset($addon->image) }}" alt="Image">

@@ -145,7 +145,7 @@
                                       </tr>
                                   </thead>
                                   <tbody>
-                                    @foreach (\App\Category::all() as $key => $category)
+                                    @foreach (getCachedCategories()->all() as $key => $category)
                                         @if(count($category->products->where('user_id', Auth::user()->id))>0)
                                           <tr>
                                               <td>{{ $category->getTranslation('name') }}</td>
@@ -162,7 +162,7 @@
                           </div>
                       </div>
                       <div class="col-md-4">
-                          @if (\App\Addon::where('unique_identifier', 'seller_subscription')->first() != null && \App\Addon::where('unique_identifier', 'seller_subscription')->first()->activated)
+                          @if (getAddons()->>where('unique_identifier', 'seller_subscription')->first() != null && getAddons()->where('unique_identifier', 'seller_subscription')->first()->activated)
 
                               <div class="card">
                                   <div class="card-header">

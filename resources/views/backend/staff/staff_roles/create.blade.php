@@ -23,7 +23,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 col-from-label"></label>
                     <div class="col-md-8">
-                        @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'pos_system')->first() != null && getAddons()->where('unique_identifier', 'pos_system')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('POS System') }}</label>
@@ -91,7 +91,7 @@
                                 </label>
                             </div>
                         </div>
-                        @if (\App\Addon::where('unique_identifier', 'refund_request')->first() != null && \App\Addon::where('unique_identifier', 'refund_request')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'refund_request')->first() != null && getAddons()->where('unique_identifier', 'refund_request')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Refunds') }}</label>
@@ -181,7 +181,7 @@
                                 </label>
                             </div>
                         </div>
-                        @if (\App\Addon::where('unique_identifier', 'affiliate_system')->first() != null && \App\Addon::where('unique_identifier', 'affiliate_system')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'affiliate_system')->first() != null && getAddons()->where('unique_identifier', 'affiliate_system')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Affiliate System') }}</label>
@@ -194,7 +194,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'offline_payment')->first() != null && getAddons()->where('unique_identifier', 'offline_payment')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Offline Payment System') }}</label>
@@ -207,7 +207,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'paytm')->first() != null && getAddons()->where('unique_identifier', 'paytm')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Paytm Payment Gateway') }}</label>
@@ -220,7 +220,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                        @if (getAddons()->>where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('Club Point System') }}</label>
@@ -233,7 +233,7 @@
                               </div>
                           </div>
                         @endif
-                        @if (\App\Addon::where('unique_identifier', 'otp_system')->first() != null && \App\Addon::where('unique_identifier', 'otp_system')->first()->activated)
+                        @if (getAddons()->where('unique_identifier', 'otp_system')->first() != null && getAddons()->where('unique_identifier', 'otp_system')->first()->activated)
                           <div class="row">
                               <div class="col-md-10">
                                   <label class="col-from-label">{{ translate('OTP System') }}</label>

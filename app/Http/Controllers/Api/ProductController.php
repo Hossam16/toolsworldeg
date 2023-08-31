@@ -131,7 +131,7 @@ class ProductController extends Controller
 
     public function flashDeal()
     {
-        $flash_deals = FlashDeal::where('status', 1)->where('featured', 1)->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->where('featured', 1)->where('start_date', '<=', strtotime(date('d-m-Y')))->where('end_date', '>=', strtotime(date('d-m-Y')))->get();
         return new FlashDealCollection($flash_deals);
     }
 
@@ -216,7 +216,7 @@ class ProductController extends Controller
             //
             // case 'brand':
             //
-            //     $brands = Brand::select('id')->where('name', 'like', "%{$key}%")->get()->toArray();
+            //     $brands = getBrands()->where('name', 'like', "%{$key}%")->all()->toArray();
             //     $collection = new SearchProductCollection(Product::where('brand_id', $brands)->orderBy('num_of_sale', 'desc')->paginate(10));
             //     $collection->appends(['key' =>  $key, 'scope' => $scope]);
             //     return $collection;
@@ -261,7 +261,7 @@ class ProductController extends Controller
         }
 
         //discount calculation
-        $flash_deals = FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $key => $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first() != null) {

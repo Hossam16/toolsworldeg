@@ -38,7 +38,7 @@ class SubSubCategoryController extends Controller
     public function create()
     {
         $categories = Category::all();
-        $brands = Brand::all();
+        $brands = getBrands()->all();
         return view('backend.product.subsubcategories.create', compact('categories', 'brands'));
     }
 
@@ -95,7 +95,7 @@ class SubSubCategoryController extends Controller
         $lang           = $request->lang;
         $subsubcategory = SubSubCategory::findOrFail($id);
         $categories     = Category::all();
-        $brands         = Brand::all();
+        $brands         = getBrands()->all();
         return view('backend.product.subsubcategories.edit', compact('subsubcategory', 'categories', 'brands','lang'));
     }
 

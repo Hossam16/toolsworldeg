@@ -29,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            @if (\App\Addon::where('unique_identifier', 'pos_system')->first() != null && \App\Addon::where('unique_identifier', 'pos_system')->first()->activated)
+            @if (getAddons()->where('unique_identifier', 'pos_system')->first() != null && getAddons()->where('unique_identifier', 'pos_system')->first()->activated)
                 <div class="d-none d-md-flex justify-content-around align-items-center align-items-stretch ml-3">
                     <div class="aiz-topbar-item">
                         <div class="d-flex align-items-center">

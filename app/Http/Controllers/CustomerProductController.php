@@ -261,7 +261,7 @@ class CustomerProductController extends Controller
     public function search(Request $request)
     {
         $query = $request->q;
-        $brand_id = (Brand::where('slug', $request->brand)->first() != null) ? Brand::where('slug', $request->brand)->first()->id : null;
+        $brand_id = (getBrands()->where('slug', $request->brand)->first() != null) ? getBrands()->where('slug', $request->brand)->first()->id : null;
         $category_id = (getCategories()->where('slug', $request->category)->first() != null) ? getCategories()->where('slug', $request->category)->first()->id : null;
         $sort_by = $request->sort_by;
         $condition = $request->condition;

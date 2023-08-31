@@ -19,7 +19,7 @@ class BrandController extends Controller
     {
 		
         $sort_search =null;
-        $brands = Brand::orderBy('name', 'asc');
+        $brands = getBrands()->orderBy('name', 'asc');
         if ($request->has('search')){
             $sort_search = $request->search;
             $brands = $brands->where('name', 'like', '%'.$sort_search.'%');

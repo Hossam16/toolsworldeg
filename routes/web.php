@@ -14,6 +14,9 @@
 //demo
 
 use App\CategoryTranslation;
+use App\Category;
+use App\BrandTranslation;
+use App\Brand;
 use App\Translation;
 
 Route::get(
@@ -61,11 +64,11 @@ Route::get(
 
 
 
-		$items = CategoryTranslation::select("category_id", "name")->where("lang", "en")->get();
+		$items = Category::select("id", "name")->get();
 		$keyValueArray = [];
 		// Iterate over the items and build the array
 		foreach ($items as $item) {
-			$keyValueArray[$item->category_id] = $item->name;
+			$keyValueArray[$item->id] = $item->name;
 		}
 		$fileContent = '<?php return ' . var_export($keyValueArray, true) . ';';
 		// Path to the translations.php file
@@ -73,13 +76,51 @@ Route::get(
 		// Write the data to the file
 		file_put_contents($filePath, $fileContent);
 
+		/*************
+		Brands Engilsh
+		**************/
+		$items = BrandTranslation::select("brand_id", "name")->where("lang", "eg")->get();
+		$keyValueArray = [];
+		// Iterate over the items and build the array
+		foreach ($items as $item) {
+			$keyValueArray[$item->brand_id] = $item->name;
+		}
+		$fileContent = '<?php return ' . var_export($keyValueArray, true) . ';';
+		// Path to the translations.php file
+		$filePath = resource_path('lang/eg/Brand.php');
+		// Write the data to the file
+		file_put_contents($filePath, $fileContent);
 
-		return trans("Category.27");
+		
+		$items = Brand::select("id", "name")->get();
+		$keyValueArray = [];
+		// Iterate over the items and build the array
+		foreach ($items as $item) {
+			$keyValueArray[$item->id] = $item->name;
+		}
+		$fileContent = '<?php return ' . var_export($keyValueArray, true) . ';';
+		// Path to the translations.php file
+		$filePath = resource_path('lang/en/Brand.php');
+		// Write the data to the file
+		file_put_contents($filePath, $fileContent);
+
+
+		return trans('translation.All Category');
 		// getBusinessSetting()->where('type', 'club_point_convert_rate')->first()->value;
 		// dd(getCurrencies()->where("id",getBusinessSetting()->where('type', 'system_default_currency')->first()->value)->first()->code);
 		// return trans("translation.Bulk Cashier");
 	}
 );
+Route::get('/test-product', function (){
+	
+	$product=app('App\Http\Controllers\HomeController')->load_home_categories_section();
+	return $product;
+});
+
+
+Route::get('test123',function(){
+dd(getFlashDeals()->where('status', 1)->all());
+});
 
 Route::get('/demo/cron_1', 'DemoController@cron_1');
 Route::get('/demo/cron_2', 'DemoController@cron_2');

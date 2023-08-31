@@ -200,7 +200,7 @@
                                                 </label>
                                             </div>
                                         @endif
-                                        @if(\App\Addon::where('unique_identifier', 'african_pg')->first() != null && \App\Addon::where('unique_identifier', 'african_pg')->first()->activated)
+                                        @if(getAddons()->where('unique_identifier', 'african_pg')->first() != null && getAddons()->where('unique_identifier', 'african_pg')->first()->activated)
                                             @if(getBusinessSetting()->where('type', 'mpesa')->first()->value == 1)
                                                 <div class="col-6 col-md-4">
                                                     <label class="aiz-megabox d-block mb-3">
@@ -241,7 +241,7 @@
                                                 </div>
                                             @endif
                                         @endif
-                                        @if(\App\Addon::where('unique_identifier', 'paytm')->first() != null && \App\Addon::where('unique_identifier', 'paytm')->first()->activated)
+                                        @if(getAddons()->where('unique_identifier', 'paytm')->first() != null && getAddons()->where('unique_identifier', 'paytm')->first()->activated)
                                             <div class="col-6 col-md-4">
                                                 <label class="aiz-megabox d-block mb-3">
                                                     <input value="paytm" class="online_payment" type="radio" name="payment_option" checked>
@@ -278,7 +278,7 @@
                                             @endif
                                         @endif
                                         @if (Auth::check())
-                                            @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+                                            @if (getAddons()->where('unique_identifier', 'offline_payment')->first() != null && getAddons()->where('unique_identifier', 'offline_payment')->first()->activated)
                                                 @foreach(\App\ManualPaymentMethod::all() as $method)
                                                     <div class="col-6 col-md-4">
                                                         <label class="aiz-megabox d-block mb-3">
@@ -311,7 +311,7 @@
                                 </div>
                             </div>
 
-                            @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated)
+                            @if (getAddons()->where('unique_identifier', 'offline_payment')->first() != null && getAddons()->where('unique_identifier', 'offline_payment')->first()->activated)
                                 <div class="bg-white border mb-3 p-3 rounded text-left d-none">
                                     <div id="manual_payment_description">
 

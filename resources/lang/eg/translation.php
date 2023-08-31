@@ -1395,4 +1395,8 @@
   'Submit as' => 'Submit as',
   'Solved' => 'Solved',
   'Role has been inserted successfully' => 'Role has been inserted successfully',
+  'All Categories' => 'جميع التصنيفات',
+  'Sort by' => 'ترتيب حسب',
+  'Sold by' => 'يباع من',
+  'reviews' => 'التقيم',
 );

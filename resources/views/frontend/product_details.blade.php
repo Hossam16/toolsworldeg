@@ -13,17 +13,17 @@
         <div class="container">
             <ul class="breadcrumb bg-transparent p-0">
                 <li class="breadcrumb-item opacity-50">
-                    <a class="text-reset" href="{{ route('home') }}">{{ trans('translations.Home') }}</a>
+                    <a class="text-reset" href="{{ route('home') }}">{{ trans('translation.Home') }}</a>
                 </li>
                 @if (!isset($detailedProduct->category_id))
                     <li class="breadcrumb-item fw-600  text-dark">
                         <a class="text-reset"
-                            href="{{ route('search') }}">"{{ trans('translations.All Categories') }}"</a>
+                            href="{{ route('search') }}">"{{ trans('translation.All Categories') }}"</a>
                     </li>
                 @else
                     <li class="breadcrumb-item opacity-50">
                         <a class="text-reset"
-                            href="{{ route('search') }}">{{ trans('translations.All Categories') }}</a>
+                            href="{{ route('search') }}">{{ trans('translation.All Categories') }}</a>
                     </li>
                 @endif
                 @if (isset($detailedProduct->category_id))
@@ -92,7 +92,7 @@
                                     <span class="rating">
                                         {{ renderStarRating($detailedProduct->rating) }}
                                     </span>
-                                    <span class="ml-1 opacity-50">({{ $total }} {{ trans('translations.reviews') }})</span>
+                                    <span class="ml-1 opacity-50">({{ $total }} {{ trans('translation.reviews') }})</span>
                                 </div>
                                 <div class="col-6 text-right">
                                     @php
@@ -107,9 +107,9 @@
                                         }
                                     @endphp
                                     @if ($qty > 0)
-                                        <span class="badge badge-md badge-inline badge-pill badge-success">{{ trans('translations.In stock') }}</span>
+                                        <span class="badge badge-md badge-inline badge-pill badge-success">{{ trans('translation.In stock') }}</span>
                                     @else
-                                        <span class="badge badge-md badge-inline badge-pill badge-danger">{{ trans('translations.Out of stock') }}</span>
+                                        <span class="badge badge-md badge-inline badge-pill badge-danger">{{ trans('translation.Out of stock') }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -118,7 +118,7 @@
 
                             <div class="row align-items-center">
                                 <div class="col-auto">
-                                    <small class="mr-2 opacity-50">{{ trans('translations.Sold by') }}: </small><br>
+                                    <small class="mr-2 opacity-50">{{ trans('translation.Sold by') }}: </small><br>
                                     
                                 </div>
                                
@@ -136,7 +136,7 @@
 
                                 <div class="row no-gutters mt-3">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50 my-2">{{ trans('translations.Price') }}:</div>
+                                        <div class="opacity-50 my-2">{{ trans('translation.Price') }}:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="fs-20 opacity-60">
@@ -152,7 +152,7 @@
 
                                 <div class="row no-gutters my-2">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50">{{ trans('translations.Discount Price') }}:</div>
+                                        <div class="opacity-50">{{ trans('translation.Discount Price') }}:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="">
@@ -168,7 +168,7 @@
                             @else
                                 <div class="row no-gutters mt-3">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50 my-2">{{ trans('translations.Price') }}:</div>
+                                        <div class="opacity-50 my-2">{{ trans('translation.Price') }}:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="">
@@ -185,7 +185,7 @@
 
                             <hr>
 
-                            {{-- <form id="option-choice-form">
+                            <form id="option-choice-form">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $detailedProduct->id }}">
 
@@ -223,7 +223,7 @@
                                 <!-- Quantity + Add to cart -->
                                 <div class="row no-gutters">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50 my-2">{{ trans('translations.Quantity') }}:</div>
+                                        <div class="opacity-50 my-2">{{ trans('translation.Quantity') }}:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="product-quantity d-flex align-items-center">
@@ -236,7 +236,7 @@
                                                     <i class="las la-plus"></i>
                                                 </button>
                                             </div>
-                                            <div class="avialable-amount opacity-60">(<span id="available-quantity">{{ $qty }}</span> {{ trans('translations.available') }})</div>
+                                            <div class="avialable-amount opacity-60">(<span id="available-quantity">{{ $qty }}</span> {{ trans('translation.available') }})</div>
                                         </div>
                                     </div>
                                 </div>
@@ -245,7 +245,7 @@
 
                                 <div class="row no-gutters pb-3 d-none" id="chosen_price_div">
                                     <div class="col-sm-2">
-                                        <div class="opacity-50 my-2">{{ trans('translations.Total Price') }}:</div>
+                                        <div class="opacity-50 my-2">{{ trans('translation.Total Price') }}:</div>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="product-price">
@@ -256,20 +256,20 @@
                                     </div>
                                 </div>
 
-                            </form> --}}
+                            </form>
 
                             <div class="mt-3">
                                 @if ($qty > 0)
                                     <button type="button" class="btn btn-soft-primary mr-2 add-to-cart fw-600" onclick="addToCart()">
                                         <i class="las la-shopping-bag"></i>
-                                        <span class="d-none d-md-inline-block"> {{ trans('translations.Add to cart') }}</span>
+                                        <span class="d-none d-md-inline-block"> {{ trans('translation.Add to cart') }}</span>
                                     </button>
                                     <button type="button" class="btn btn-primary buy-now fw-600" onclick="buyNow()">
-                                        <i class="la la-shopping-cart"></i> {{ trans('translations.Buy Now') }}
+                                        <i class="la la-shopping-cart"></i> {{ trans('translation.Buy Now') }}
                                     </button>
                                 @else
                                     <button type="button" class="btn btn-secondary fw-600" disabled>
-                                        <i class="la la-cart-arrow-down"></i> {{ trans('translations.Out of Stock') }}
+                                        <i class="la la-cart-arrow-down"></i> {{ trans('translation.Out of Stock') }}
                                     </button>
                                 @endif
                             </div>
@@ -280,11 +280,11 @@
                                 <div class="d-table-cell">
                                     <!-- Add to wishlist button -->
                                     <button type="button" class="btn pl-0 btn-link fw-600" onclick="addToWishList({{ $detailedProduct->id }})">
-                                        {{ trans('translations.Add to wishlist') }}
+                                        {{ trans('translation.Add to wishlist') }}
                                     </button>
                                     <!-- Add to compare button -->
                                     <button type="button" class="btn btn-link btn-icon-left fw-600" onclick="addToCompare({{ $detailedProduct->id }})">
-                                        {{ trans('translations.Add to compare') }}
+                                        {{ trans('translation.Add to compare') }}
                                     </button>
                                    
                                 </div>
@@ -295,7 +295,7 @@
 
                             <div class="row no-gutters mt-4">
                                 <div class="col-sm-2">
-                                    <div class="opacity-50 my-2">{{ trans('translations.Share') }}:</div>
+                                    <div class="opacity-50 my-2">{{ trans('translation.Share') }}:</div>
                                 </div>
                                 <div class="col-sm-10">
                                     <div class="aiz-share"></div>
@@ -315,7 +315,7 @@
                     <div class="bg-white shadow-sm mb-3">
                         <div class="position-relative p-3 text-left">
                             
-                            <div class="opacity-50 fs-12 border-bottom">{{ trans('translations.Sold By') }}</div>
+                            <div class="opacity-50 fs-12 border-bottom">{{ trans('translation.Sold By') }}</div>
                            
                             @php
                                 $total = 0;
@@ -334,14 +334,14 @@
                                         {{ renderStarRating(0) }}
                                     @endif
                                 </div>
-                                <div class="opacity-60 fs-12">({{ $total }} {{ trans('translations.customer reviews') }})</div>
+                                <div class="opacity-60 fs-12">({{ $total }} {{ trans('translation.customer reviews') }})</div>
                             </div>
                         </div>
                         
                     </div>
                     <div class="bg-white rounded shadow-sm mb-3">
                         <div class="p-3 border-bottom fs-16 fw-600">
-                            {{ trans('translations.Top Selling Products') }}
+                            {{ trans('translation.Top Selling Products') }}
                         </div>
                         <div class="p-3">
                             <ul class="list-group list-group-flush">
@@ -353,14 +353,14 @@
                 <div class="col-xl-9 order-0 order-xl-1">
                     <div class="bg-white mb-3 shadow-sm rounded">
                         <div class="nav border-bottom aiz-nav-tabs">
-                            <a href="#tab_default_1" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset active show">{{ trans('translations.Description') }}</a>
+                            <a href="#tab_default_1" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset active show">{{ trans('translation.Description') }}</a>
                             @if ($detailedProduct->video_link != null)
-                                <a href="#tab_default_2" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translations.Video') }}</a>
+                                <a href="#tab_default_2" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translation.Video') }}</a>
                             @endif
                             @if ($detailedProduct->pdf != null)
-                                <a href="#tab_default_3" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translations.Downloads') }}</a>
+                                <a href="#tab_default_3" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translation.Downloads') }}</a>
                             @endif
-                                <a href="#tab_default_4" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translations.Reviews') }}</a>
+                                <a href="#tab_default_4" data-toggle="tab" class="p-3 fs-16 fw-600 text-reset">{{ trans('translation.Reviews') }}</a>
                         </div>
 
                         <div class="tab-content pt-0">
@@ -387,7 +387,7 @@
                             </div>
                             <div class="tab-pane fade" id="tab_default_3">
                                 <div class="p-4 text-center ">
-                                    <a href="{{ uploaded_asset($detailedProduct->pdf) }}" class="btn btn-primary">{{ trans('translations.Download') }}</a>
+                                    <a href="{{ uploaded_asset($detailedProduct->pdf) }}" class="btn btn-primary">{{ trans('translation.Download') }}</a>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tab_default_4">
@@ -430,7 +430,7 @@
 
                                     @if (count($detailedProduct->reviews) <= 0)
                                         <div class="text-center fs-18 opacity-70">
-                                            {{ trans('translations.There have been no reviews for this product yet.') }}
+                                            {{ trans('translation.There have been no reviews for this product yet.') }}
                                         </div>
                                     @endif
 
@@ -443,7 +443,7 @@
                      <div class="bg-white rounded shadow-sm">
                         <div class="border-bottom p-3">
                             <h3 class="fs-16 fw-600 mb-0">
-                                <span class="mr-4">{{ trans('translations.Related products') }}</span>
+                                <span class="mr-4">{{ trans('translation.Related products') }}</span>
                             </h3>
                         </div>
                         <div class="p-3">
@@ -476,10 +476,10 @@
                                                 <a href="{{ route('product', $related_product->slug) }}" class="d-block text-reset">{{ $related_product->getTranslation('name') }}</a>
                                             </h3>
                                             @if (
-                                                \App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                                                    \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                                                getAddons()->where('unique_identifier', 'club_point')->first() != null &&
+                                                    getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                                                 <div class="rounded px-2 mt-2 bg-soft-primary border-soft-primary border">
-                                                    {{ trans('translations.Club Point') }}:
+                                                    {{ trans('translation.Club Point') }}:
                                                     <span class="fw-700 float-right">{{ $related_product->earn_point }}</span>
                                                 </div>
                                             @endif
@@ -502,7 +502,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-zoom product-modal" id="modal-size" role="document">
             <div class="modal-content position-relative">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-600 h5">{{ trans('translations.Any query about this product') }}</h5>
+                    <h5 class="modal-title fw-600 h5">{{ trans('translation.Any query about this product') }}</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -512,15 +512,15 @@
                     <input type="hidden" name="product_id" value="{{ $detailedProduct->id }}">
                     <div class="modal-body gry-bg px-3 pt-3">
                         <div class="form-group">
-                            <input type="text" class="form-control mb-3" name="title" value="{{ $detailedProduct->name }}" placeholder="{{ trans('translations.Product Name') }}" required>
+                            <input type="text" class="form-control mb-3" name="title" value="{{ $detailedProduct->name }}" placeholder="{{ trans('translation.Product Name') }}" required>
                         </div>
                         <div class="form-group">
-                            <textarea class="form-control" rows="8" name="message" required placeholder="{{ trans('translations.Your Question') }}">{{ route('product', $detailedProduct->slug) }}</textarea>
+                            <textarea class="form-control" rows="8" name="message" required placeholder="{{ trans('translation.Your Question') }}">{{ route('product', $detailedProduct->slug) }}</textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-primary fw-600" data-dismiss="modal">{{ trans('translations.Cancel') }}</button>
-                        <button type="submit" class="btn btn-primary fw-600">{{ trans('translations.Send') }}</button>
+                        <button type="button" class="btn btn-outline-primary fw-600" data-dismiss="modal">{{ trans('translation.Cancel') }}</button>
+                        <button type="submit" class="btn btn-primary fw-600">{{ trans('translation.Send') }}</button>
                     </div>
                 </form>
             </div>
@@ -532,7 +532,7 @@
         <div class="modal-dialog modal-dialog-zoom" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title fw-600">{{ trans('translations.Login') }}</h6>
+                    <h6 class="modal-title fw-600">{{ trans('translation.Login') }}</h6>
                     <button type="button" class="close" data-dismiss="modal">
                         <span aria-hidden="true"></span>
                     </button>
@@ -546,30 +546,30 @@
                             </div>
 
                             <div class="form-group">
-                                <input type="password" name="password" class="form-control h-auto form-control-lg" placeholder="{{ trans('translations.Password') }}">
+                                <input type="password" name="password" class="form-control h-auto form-control-lg" placeholder="{{ trans('translation.Password') }}">
                             </div>
 
                             <div class="row mb-2">
                                 <div class="col-6">
                                     <label class="aiz-checkbox">
                                         <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                                        <span class=opacity-60>{{ trans('translations.Remember Me') }}</span>
+                                        <span class=opacity-60>{{ trans('translation.Remember Me') }}</span>
                                         <span class="aiz-square-check"></span>
                                     </label>
                                 </div>
                                 <div class="col-6 text-right">
-                                    <a href="{{ route('password.request') }}" class="text-reset opacity-60 fs-14">{{ trans('translations.Forgot password?') }}</a>
+                                    <a href="{{ route('password.request') }}" class="text-reset opacity-60 fs-14">{{ trans('translation.Forgot password?') }}</a>
                                 </div>
                             </div>
 
                             <div class="mb-5">
-                                <button type="submit" class="btn btn-primary btn-block fw-600">{{ trans('translations.Login') }}</button>
+                                <button type="submit" class="btn btn-primary btn-block fw-600">{{ trans('translation.Login') }}</button>
                             </div>
                         </form>
 
                         <div class="text-center mb-3">
-                            <p class="text-muted mb-0">{{ trans('translations.Dont have an account?') }}</p>
-                            <a href="{{ route('user.registration') }}">{{ trans('translations.Register Now') }}</a>
+                            <p class="text-muted mb-0">{{ trans('translation.Dont have an account?') }}</p>
+                            <a href="{{ route('user.registration') }}">{{ trans('translation.Register Now') }}</a>
                         </div>
                         
                     </div>

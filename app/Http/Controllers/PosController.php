@@ -111,7 +111,7 @@ class PosController extends Controller
 
         //discount calculation based on flash deal and regular discount
         //calculation of taxes
-        $flash_deals = \App\FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1  && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && \App\FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $product->id)->first() != null) {
@@ -398,7 +398,7 @@ class PosController extends Controller
                 }
 
                 if($request->user_id != NULL){
-                    if (\App\Addon::where('unique_identifier', 'club_point')->first() != null && \App\Addon::where('unique_identifier', 'club_point')->first()->activated) {
+                    if (getAddons()->where('unique_identifier', 'club_point')->first() != null && getAddons()->where('unique_identifier', 'club_point')->first()->activated) {
                         $clubpointController = new ClubPointController;
                         $clubpointController->processClubPoints($order);
                     }

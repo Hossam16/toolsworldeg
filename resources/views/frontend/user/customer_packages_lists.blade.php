@@ -41,7 +41,7 @@
                                 @if ($customer_package->amount == 0)
                                     <button class="btn btn-primary" onclick="get_free_package({{ $customer_package->id}})">{{ translate('Free Package')}}</button>
                                 @else
-                                    @if (\App\Addon::where('unique_identifier', 'offline_payment')->first() != null && \App\Addon::where('unique_identifier', 'offline_payment')->first()->activated )
+                                    @if (getAddons()->where('unique_identifier', 'offline_payment')->first() != null && getAddons()->where('unique_identifier', 'offline_payment')->first()->activated )
                                         <button class="btn btn-primary" onclick="select_payment_type({{ $customer_package->id}})">{{ translate('Purchase Package')}}</button>
                                     @else
                                         <button class="btn btn-primary" onclick="show_price_modal({{ $customer_package->id}})">{{ translate('Purchase Package')}}</button>
@@ -143,7 +143,7 @@
                                         @if(getBusinessSetting()->where('type', 'iyzico')->first()->value == 1)
                                             <option value="iyzico">{{ translate('Iyzico')}}</option>
                                         @endif
-                                        @if(\App\Addon::where('unique_identifier', 'african_pg')->first() != null && \App\Addon::where('unique_identifier', 'african_pg')->first()->activated)
+                                        @if(getAddons()->where('unique_identifier', 'african_pg')->first() != null && getAddons()->where('unique_identifier', 'african_pg')->first()->activated)
                                             @if(getBusinessSetting()->where('type', 'mpesa')->first()->value == 1)
                                                 <option value="mpesa">{{ translate('Mpesa')}}</option>
                                             @endif

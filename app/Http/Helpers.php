@@ -1,12 +1,14 @@
 <?php
 
+use App\Addon;
+use App\Brand;
 use App\Currency;
+use App\Category;
 use App\BusinessSetting;
 use App\Product;
 use App\SubSubCategory;
 use App\FlashDealProduct;
 use App\FlashDeal;
-use App\Models\Category;
 use App\OtpConfiguration;
 use App\Upload;
 use App\Translation;
@@ -442,7 +444,7 @@ if (! function_exists('home_discounted_price')) {
             }
         }
 
-        $flash_deals = \App\FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first() != null) {
@@ -493,10 +495,26 @@ if (! function_exists('home_discounted_price')) {
 }
 
 //Shows Base Price
-if (! function_exists('home_base_price')) {
-    function home_base_price($id)
+if (!function_exists('home_base_price')) {
+    function home_base_price($id, $product = null)
     {
-        $product = Product::findOrFail($id);
+        if ($product == null) {
+            $product = Product::findOrFail($id);
+        }
+        $price = $product->unit_price;
+        if ($product->tax_type == 'percent') {
+            $price += ($price * $product->tax) / 100;
+        } elseif ($product->tax_type == 'amount') {
+            $price += $product->tax;
+        }
+        return format_price(convert_price($price));
+    }
+}
+
+
+if (! function_exists('home_categories_base_price')) {
+    function home_categories_base_price($product)
+    {
         $price = $product->unit_price;
         if($product->tax_type == 'percent'){
             $price += ($price*$product->tax)/100;
@@ -510,12 +528,54 @@ if (! function_exists('home_base_price')) {
 
 //Shows Base Price with discount
 if (! function_exists('home_discounted_base_price')) {
-    function home_discounted_base_price($id)
+    function home_discounted_base_price($id, $product = null)
     {
-        $product = Product::findOrFail($id);
+        if ($product == null) {
+            $product = Product::findOrFail($id);
+        }
         $price = $product->unit_price;
 
-        $flash_deals = \App\FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
+        $inFlashDeal = false;
+        foreach ($flash_deals as $flash_deal) {
+            if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first() != null) {
+                $flash_deal_product = FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first();
+                if($flash_deal_product->discount_type == 'percent'){
+                    $price -= ($price*$flash_deal_product->discount)/100;
+                }
+                elseif($flash_deal_product->discount_type == 'amount'){
+                    $price -= $flash_deal_product->discount;
+                }
+                $inFlashDeal = true;
+                break;
+            }
+        }
+
+        if (!$inFlashDeal) {
+            if($product->discount_type == 'percent'){
+                $price -= ($price*$product->discount)/100;
+            }
+            elseif($product->discount_type == 'amount'){
+                $price -= $product->discount;
+            }
+        }
+
+        if($product->tax_type == 'percent'){
+            $price += ($price*$product->tax)/100;
+        }
+        elseif($product->tax_type == 'amount'){
+            $price += $product->tax;
+        }
+
+        return format_price(convert_price($price));
+    }
+}
+if (! function_exists('home_categories_discounted_base_price')) {
+    function home_categories_discounted_base_price($product)
+    {
+        $price = $product->unit_price;
+
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first() != null) {
@@ -647,7 +707,7 @@ if (! function_exists('homeDiscountedBasePrice')) {
         $product = Product::findOrFail($id);
         $price = $product->unit_price;
 
-        $flash_deals = FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first() != null) {
@@ -733,7 +793,7 @@ if (! function_exists('homeDiscountedPrice')) {
             }
         }
 
-        $flash_deals = FlashDeal::where('status', 1)->get();
+        $flash_deals = getFlashDeals()->where('status', 1)->all();
         $inFlashDeal = false;
         foreach ($flash_deals as $flash_deal) {
             if ($flash_deal != null && $flash_deal->status == 1 && strtotime(date('d-m-Y')) >= $flash_deal->start_date && strtotime(date('d-m-Y')) <= $flash_deal->end_date && FlashDealProduct::where('flash_deal_id', $flash_deal->id)->where('product_id', $id)->first() != null) {
@@ -825,35 +885,131 @@ if (!function_exists('getBusinessSetting')) {
     function getBusinessSetting($cacheDuration = 3600) {
         $cacheKey = 'business_settings';
 
-        return Cache::remember($cacheKey, $cacheDuration, function () {
-            return BusinessSetting::all();
-        });
+        $businessSetting = Cache::get($cacheKey);
+
+        if ($businessSetting === null) {
+            // Cache expired or not found, retrieve and cache the business setting
+            $businessSetting = BusinessSetting::all();
+            Cache::put($cacheKey, $businessSetting, $cacheDuration);
+        }
+
+        return $businessSetting;
     }
 }
 
+
+/**
+ * Get an array of FlashDeal models with caching.
+ *
+ * @param  int  $cacheDuration  Duration in seconds to cache the data.
+ * @return \Illuminate\Database\Eloquent\Collection|mixed
+ */
+if (!function_exists('getFlashDeals')) {
+    function getFlashDeals($cacheDuration = 3600) {
+        $cacheKey = 'flash_deals';
+
+        // Attempt to retrieve data from the cache
+        $flashDeals = Cache::get($cacheKey);
+
+        if ($flashDeals === null) {
+            // Cache expired or not found, retrieve and cache the FlashDeals
+            $flashDeals = FlashDeal::all();
+            Cache::put($cacheKey, $flashDeals, $cacheDuration);
+        }
+
+        return $flashDeals;
+    }
+}
+
+/**
+ * Get an array of brand models with caching.
+ *
+ * @param  int  $cacheDuration  Duration in seconds to cache the data.
+ * @return \Illuminate\Database\Eloquent\Collection|mixed
+ */
+if (!function_exists('getBrands')) {
+    function getBrands($cacheDuration = 3600) {
+        $cacheKey = 'brands';
+
+        // Attempt to retrieve data from the cache
+        $brands = Cache::get($cacheKey);
+
+        if ($brands === null) {
+            // Cache expired or not found, retrieve and cache the brands
+            $brands = Brand::all();
+            Cache::put($cacheKey, $brands, $cacheDuration);
+        }
+
+        return $brands;
+    }
+}
+
+/**
+ * Get an array of Currency models with caching.
+ *
+ * @param  int  $cacheDuration  Duration in seconds to cache the data.
+ * @return \Illuminate\Database\Eloquent\Collection|mixed
+ */
 if (!function_exists('getCurrencies')) {
     function getCurrencies($cacheDuration = 3600) {
         $cacheKey = 'currencies';
 
-        return Cache::remember($cacheKey, $cacheDuration, function () {
-            return Currency::all();
-        });
+        // Attempt to retrieve data from the cache
+        $currencies = Cache::get($cacheKey);
+
+        if ($currencies === null) {
+            // Cache expired or not found, retrieve and cache the Currencies
+            $currencies = Currency::all();
+            Cache::put($cacheKey, $currencies, $cacheDuration);
+        }
+
+        return $currencies;
     }
 }
 
-if (!function_exists('getCategories')) {
-    function getCategories($cacheDuration = 3600) {
-        $cacheKey = 'categories';
+/**
+ * Get an array of Addon models with caching.
+ *
+ * @param  int  $cacheDuration  Duration in seconds to cache the data.
+ * @return \Illuminate\Database\Eloquent\Collection|mixed
+ */
+if (!function_exists('getAddons')) {
+    function getAddons($cacheDuration = 3600) {
+        $cacheKey = 'addons';
 
-        $Categories = Category::get($cacheKey);
+        // Attempt to retrieve data from the cache
+        $addons = Cache::get($cacheKey);
 
-        if ($Categories === null) {
-            // Cache expired or not found, retrieve and cache the business setting
-            $Categories = Currency::all();
-            Cache::put($cacheKey, $Categories, $cacheDuration);
+        if ($addons === null) {
+            // Cache expired or not found, retrieve and cache the Addons
+            $addons = Addon::all();
+            Cache::put($cacheKey, $addons, $cacheDuration);
         }
 
-        return $Categories;
+        return $addons;
+    }
+}
+
+/**
+ * Get an array of Category models with caching.
+ *
+ * @param  int  $cacheDuration  Duration in seconds to cache the data.
+ * @return \Illuminate\Database\Eloquent\Collection|mixed
+ */
+if (!function_exists('getCachedCategories')) {
+    function getCachedCategories($cacheDuration = 3600) {
+        $cacheKey = 'categories';
+
+        // Attempt to retrieve data from the cache
+        $categories = Cache::get($cacheKey);
+
+        if ($categories === null) {
+            // Cache expired or not found, retrieve and cache the Categories
+            $categories = Category::all();
+            Cache::put($cacheKey, $categories, $cacheDuration);
+        }
+
+        return $categories;
     }
 }
 
@@ -1271,5 +1427,3 @@ if (!function_exists('formatBytes')) {
         return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }
-
-?>

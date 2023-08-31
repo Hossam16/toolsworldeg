@@ -2,13 +2,13 @@
 
 @if (isset($category_id))
     @php
-        $meta_title = \App\Category::find($category_id)->meta_title;
-        $meta_description = \App\Category::find($category_id)->meta_description;
+        $meta_title = getCachedCategories()->find($category_id)->meta_title;
+        $meta_description = getCachedCategories()->find($category_id)->meta_description;
     @endphp
 @elseif (isset($brand_id))
     @php
-        $meta_title = \App\Brand::find($brand_id)->meta_title;
-        $meta_description = \App\Brand::find($brand_id)->meta_description;
+        $meta_title = getBrands()->find($brand_id)->meta_title;
+        $meta_description = getBrands()->find($brand_id)->meta_description;
     @endphp
 @else
     @php
@@ -59,7 +59,7 @@
                                     <div class="p-3">
                                         <ul class="list-unstyled">
                                             @if (!isset($category_id))
-                                                @foreach (\App\Category::where('level', 0)->get() as $category)
+                                                @foreach (getCachedCategories()->where('level', 0)->all() as $category)
                                                     <li class="mb-2 ml-2">
                                                         <a class="text-reset fs-14"
                                                             href="{{ route('products.category', $category->slug) }}">{{ $category->getTranslation('name') }}</a>
@@ -72,26 +72,26 @@
                                                         {{ translate('All Categories') }}
                                                     </a>
                                                 </li>
-                                                @if (\App\Category::find($category_id)->parent_id != 0)
+                                                @if (getCachedCategories()->find($category_id)->parent_id != 0)
                                                     <li class="mb-2">
                                                         <a class="text-reset fs-14 fw-600"
-                                                            href="{{ route('products.category', \App\Category::find(\App\Category::find($category_id)->parent_id)->slug) }}">
+                                                            href="{{ route('products.category', getCachedCategories()->find(getCachedCategories()->find($category_id)->parent_id)->slug) }}">
                                                             <i class="las la-angle-left"></i>
-                                                            {{ \App\Category::find(\App\Category::find($category_id)->parent_id)->getTranslation('name') }}
+                                                            {{ getCachedCategories()->find(getCachedCategories()->find($category_id)->parent_id)->getTranslation('name') }}
                                                         </a>
                                                     </li>
                                                 @endif
                                                 <li class="mb-2">
                                                     <a class="text-reset fs-14 fw-600"
-                                                        href="{{ route('products.category', \App\Category::find($category_id)->slug) }}">
+                                                        href="{{ route('products.category', getCachedCategories()->find($category_id)->slug) }}">
                                                         <i class="las la-angle-left"></i>
-                                                        {{ \App\Category::find($category_id)->getTranslation('name') }}
+                                                        {{ getCachedCategories()->find($category_id)->getTranslation('name') }}
                                                     </a>
                                                 </li>
                                                 @foreach (\App\Utility\CategoryUtility::get_immediate_children_ids($category_id) as $key => $id)
                                                     <li class="ml-4 mb-2">
                                                         <a class="text-reset fs-14"
-                                                            href="{{ route('products.category', \App\Category::find($id)->slug) }}">{{ \App\Category::find($id)->getTranslation('name') }}</a>
+                                                            href="{{ route('products.category', getCachedCategories()->find($id)->slug) }}">{{ getCachedCategories()->find($id)->getTranslation('name') }}</a>
                                                     </li>
                                                 @endforeach
                                             @endif
@@ -105,8 +105,8 @@
                                     <div class="p-3">
                                         <div class="aiz-range-slider">
                                             <div id="input-slider-range"
-                                                data-range-value-min="@if (count(\App\Product::query()->get()) < 1) 0 @else {{ filter_products(\App\Product::query())->get()->min('unit_price') }} @endif"
-                                                data-range-value-max="@if (count(\App\Product::query()->get()) < 1) 0 @else {{ filter_products(\App\Product::query())->get()->max('unit_price') }} @endif">
+                                                data-range-value-min="@if (count($products) < 1) 0 @else {{ $products->min('unit_price') }} @endif"
+                                                data-range-value-max="@if (count($products) < 1) 0 @else {{ $products->max('unit_price') }} @endif">
                                             </div>
 
                                             <div class="row mt-2">
@@ -220,7 +220,7 @@
                             @if (isset($category_id))
                                 <li class="text-dark fw-600 breadcrumb-item">
                                     <a class="text-reset"
-                                        href="{{ route('products.category', \App\Category::find($category_id)->slug) }}">"{{ \App\Category::find($category_id)->getTranslation('name') }}"</a>
+                                        href="{{ route('products.category', getCachedCategories()->find($category_id)->slug) }}">"{{ getCachedCategories()->find($category_id)->getTranslation('name') }}"</a>
                                 </li>
                             @endif
                         </ul>
@@ -250,14 +250,14 @@
                                     <select class="form-control form-control-sm aiz-selectpicker" data-live-search="true"
                                         name="brand" onchange="filter()">
                                         <option value="">{{ translate('All Brands') }}</option>
-                                        @foreach (\App\Brand::all() as $brand)
+                                        @foreach (getBrands()->all() as $brand)
                                             <option value="{{ $brand->slug }}"
                                                 @isset($brand_id) @if ($brand_id == $brand->id) selected @endif @endisset>
                                                 {{ $brand->getTranslation('name') }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group ml-2 mr-0 w-200px d-none d-md-block">
+                                {{-- <div class="form-group ml-2 mr-0 w-200px d-none d-md-block">
                                     <label class="mb-0 opacity-50">{{ translate('Sellers') }}</label>
                                     <select class="form-control form-control-sm aiz-selectpicker" data-live-search="true"
                                         name="seller_id" onchange="filter()">
@@ -270,7 +270,7 @@
                                             @endif
                                         @endforeach
                                     </select>
-                                </div>
+                                </div> --}}
                                 <div class="d-xl-none ml-auto ml-md-3 mr-0 form-group align-self-end">
                                     <button type="button" class="btn btn-icon p-0" data-toggle="class-toggle"
                                         data-target=".aiz-filter-sidebar">
@@ -316,12 +316,12 @@
                                         </div>
                                         <div class="p-md-3 p-2 text-left">
                                             <div class="fs-15">
-                                                @if (home_base_price($product->id) != home_discounted_base_price($product->id))
+                                                @if (home_base_price($product->id, $product) != home_discounted_base_price($product->id, $product))
                                                     <del
-                                                        class="fw-600 opacity-50 mr-1">{{ home_base_price($product->id) }}</del>
+                                                        class="fw-600 opacity-50 mr-1">{{ home_base_price($product->id, $product) }}</del>
                                                 @endif
                                                 <span
-                                                    class="fw-700 text-primary">{{ home_discounted_base_price($product->id) }}</span>
+                                                    class="fw-700 text-primary">{{ home_discounted_base_price($product->id, $product) }}</span>
                                             </div>
                                             <div class="rating rating-sm mt-1">
                                                 {{ renderStarRating($product->rating) }}
@@ -331,9 +331,8 @@
                                                     class="d-block text-reset">{{ $product->getTranslation('name') }}</a>
                                             </h3>
 
-                                            @if (
-                                                \App\Addon::where('unique_identifier', 'club_point')->first() != null &&
-                                                    \App\Addon::where('unique_identifier', 'club_point')->first()->activated)
+                                            @if (getAddons()->where('unique_identifier', 'club_point')->first() != null &&
+                                                    getAddons()->where('unique_identifier', 'club_point')->first()->activated)
                                                 <div class="rounded px-2 mt-2 bg-soft-primary border-soft-primary border">
                                                     {{ translate('Club Point') }}:
                                                     <span class="fw-700 float-right">{{ $product->earn_point }}</span>
@@ -385,7 +384,8 @@
                     var url = window.location.href;
                     urlParam = url.split('?')[1],
                         $.ajax({
-                            url: "{{ route('searchScroll') }}?" + urlParam + "&page=" + page + "&category_id=" + {{ $category_id ?? "null"}} + "&brand_id=" + {{ $brand_id ?? "null"}},
+                            url: "{{ route('searchScroll') }}?" + urlParam + "&page=" + page + "&category_id=" +
+                                {{ $category_id ?? 'null' }} + "&brand_id=" + {{ $brand_id ?? 'null' }},
                             success: function(result) {
                                 isLoading = 0;
                                 $("#products_loader").hide();
